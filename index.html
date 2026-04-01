@@ -1,2994 +1,1206 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GWall 4.0 網路安全解決方案｜企業級整合式防護平台</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>照護助手</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg: linear-gradient(135deg, #0a0b1e 0%, #1a0b2e 35%, #16213e 100%);
-    --panel: linear-gradient(145deg, rgba(15,25,45,0.9), rgba(25,35,55,0.8));
-    --panel-border: linear-gradient(45deg, #00d4ff, #7c3aed, #00d4ff);
-    --muted: #64748b;
-    --text: #e2e8f0;
-    --primary: #00d4ff;
-    --primary-2: #0ea5e9;
-    --accent: #10b981;
-    --warn: #f59e0b;
-    --critical: #ef4444;
-    --glass: rgba(255,255,255,0.03);
-    --glow: 0 0 20px rgba(0,212,255,0.3);
-    --neon-blue: #00d4ff;
-    --neon-purple: #7c3aed;
-    --neon-green: #10b981;
-  }
-  
-  * { box-sizing: border-box; }
-  
-  html, body { height: 100%; }
-  
-  body {
-    margin: 0;
-    font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace, 'Noto Sans TC', system-ui;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    position: relative;
-    line-height: 1.6;
-  }
-  
-  /* 背景科技網格 */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-      radial-gradient(circle at 25% 25%, rgba(0,212,255,0.1) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, rgba(124,58,237,0.08) 0%, transparent 50%),
-      linear-gradient(90deg, transparent 49%, rgba(0,212,255,0.03) 50%, transparent 51%),
-      linear-gradient(0deg, transparent 49%, rgba(0,212,255,0.03) 50%, transparent 51%);
-    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-    pointer-events: none;
-    animation: grid-pulse 4s ease-in-out infinite alternate;
-  }
-  
-  @keyframes grid-pulse {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.6; }
-  }
-  
-  /* 浮動粒子效果 */
-  .particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  
-  .particle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: var(--neon-blue);
-    border-radius: 50%;
-    animation: float 6s ease-in-out infinite;
-    box-shadow: 0 0 10px var(--neon-blue);
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
-    50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
-  }
-  
-  /* Header 科技感 */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: linear-gradient(135deg, 
-      rgba(15,25,45,0.95) 0%, 
-      rgba(25,35,55,0.9) 50%, 
-      rgba(15,25,45,0.95) 100%);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0,212,255,0.2);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    justify-content: space-between;
-    box-shadow: 
-      0 8px 32px rgba(0,0,0,0.3),
-      inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-  
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--neon-blue);
-    text-shadow: 0 0 10px var(--neon-blue);
-  }
-  
-  .brand .logo {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
-    display: grid;
-    place-items: center;
-    font-size: 16px;
-    animation: logo-pulse 2s ease-in-out infinite alternate;
-    box-shadow: var(--glow);
-  }
-  
-  @keyframes logo-pulse {
-    0% { box-shadow: 0 0 20px rgba(0,212,255,0.3); }
-    100% { box-shadow: 0 0 30px rgba(0,212,255,0.6), 0 0 40px rgba(124,58,237,0.3); }
-  }
-  
-  .search {
-    max-width: 600px;
-    flex: 1;
-    position: relative;
-  }
-  
-  .search input {
-    width: 100%;
-    background: rgba(15,25,45,0.8);
-    border: 1px solid rgba(0,212,255,0.3);
-    color: var(--text);
-    padding: 12px 16px;
-    border-radius: 12px;
-    outline: none;
-    font-family: inherit;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-  
-  .search input:focus {
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 20px rgba(0,212,255,0.2);
-    background: rgba(15,25,45,0.9);
-  }
-  
-  .btn {
-    position: relative;
-    background: linear-gradient(135deg, rgba(15,25,45,0.8), rgba(25,35,55,0.6));
-    border: 1px solid rgba(0,212,255,0.4);
-    color: var(--neon-blue);
-    padding: 12px 18px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    overflow: hidden;
-  }
-  
-  .btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, transparent, rgba(0,212,255,0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-  }
-  
-  .btn:hover::before {
-    transform: translateX(100%);
-  }
-  
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 0 25px rgba(0,212,255,0.4),
-      0 8px 25px rgba(0,0,0,0.3);
-    border-color: var(--neon-blue);
-  }
-  
-  /* Layout */
-  .layout {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 24px;
-    position: relative;
-    z-index: 1;
-  }
-  
-  @media (max-width: 980px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { position: static; height: auto; }
-  }
-  
-  /* Sidebar 科技感 */
-  .sidebar {
-    position: sticky;
-    top: 100px;
-    height: calc(100vh - 120px);
-    overflow: auto;
-    background: linear-gradient(145deg, rgba(15,25,45,0.7), rgba(25,35,55,0.5));
-    border: 1px solid rgba(0,212,255,0.2);
-    border-radius: 16px;
-    padding: 20px;
-    backdrop-filter: blur(15px);
-    box-shadow: 
-      0 8px 32px rgba(0,0,0,0.3),
-      inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-  
-  .toc h3 {
-    margin: 8px 0 16px;
-    font-size: 14px;
-    color: var(--neon-blue);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px var(--neon-blue);
-  }
-  
-  .toc a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--text);
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    margin-bottom: 4px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .toc a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg, var(--neon-blue), transparent);
-    transition: width 0.3s ease;
-  }
-  
-  .toc a:hover {
-    background: rgba(0,212,255,0.1);
-    border-color: rgba(0,212,255,0.3);
-    transform: translateX(4px);
-  }
-  
-  .toc a:hover::before {
-    width: 4px;
-  }
-  
-  .toc a.active {
-    background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(124,58,237,0.1));
-    border-color: var(--neon-blue);
-    color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0,212,255,0.3);
-  }
-  
-  .toc a.active::before {
-    width: 4px;
-  }
-  
-  /* Main Content */
-  main { min-height: 70vh; }
-  
-  section {
-    background: var(--panel);
-    border: 1px solid rgba(0,212,255,0.2);
-    border-radius: 16px;
-    padding: 28px;
-    margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(15px);
-    box-shadow: 
-      0 8px 32px rgba(0,0,0,0.3),
-      inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-  
-  section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-green));
-    animation: border-flow 3s ease-in-out infinite;
-  }
-  
-  @keyframes border-flow {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-  
-  .title {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  
-  h2 {
-    margin: 0;
-    font-size: 1.6rem;
-    color: var(--neon-blue);
-    font-weight: 700;
-    text-shadow: 0 0 15px var(--neon-blue);
-  }
-  
-  .meta {
-    color: var(--muted);
-    font-size: 0.9rem;
-    font-style: italic;
-    margin-bottom: 16px;
-  }
-  
-  /* Cards */
-  .card {
-    background: linear-gradient(145deg, rgba(15,25,45,0.6), rgba(25,35,55,0.4));
-    border: 1px solid rgba(0,212,255,0.2);
-    border-radius: 12px;
-    padding: 18px;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.1), transparent);
-    transition: left 0.6s ease;
-  }
-  
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 
-      0 0 25px rgba(0,212,255,0.3),
-      0 12px 35px rgba(0,0,0,0.3);
-    border-color: var(--neon-blue);
-  }
-  
-  .card:hover::before {
-    left: 100%;
-  }
-  
-  /* Feature Cards */
-  .feature {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  
-  .feature .icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-    display: grid;
-    place-items: center;
-    font-size: 24px;
-    box-shadow: 0 0 20px rgba(0,212,255,0.4);
-    animation: icon-glow 2s ease-in-out infinite alternate;
-    flex-shrink: 0;
-  }
-  
-  @keyframes icon-glow {
-    0% { box-shadow: 0 0 20px rgba(0,212,255,0.4); }
-    100% { box-shadow: 0 0 30px rgba(0,212,255,0.6), 0 0 40px rgba(124,58,237,0.2); }
-  }
-  
-  /* Stats Card */
-  .stat-card {
-    text-align: center;
-    background: linear-gradient(145deg, rgba(16,185,129,0.2), rgba(15,25,45,0.8));
-    border: 1px solid var(--neon-green);
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .stat-card .number {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: var(--neon-green);
-    text-shadow: 0 0 15px var(--neon-green);
-    display: block;
-    margin-bottom: 8px;
-  }
-  
-  .stat-card .label {
-    font-size: 0.9rem;
-    color: var(--text);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  /* Grid */
-  .grid { display: grid; gap: 16px; }
-  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-  
-  @media (max-width: 960px) {
-    .grid.cols-3, .grid.cols-2, .grid.cols-4 { grid-template-columns: 1fr; }
-  }
-  
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin: 12px 0 20px;
-    flex-wrap: wrap;
-  }
-  
-  .tab {
-    padding: 12px 18px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,212,255,0.3);
-    background: rgba(15,25,45,0.6);
-    color: var(--text);
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .tab::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--neon-blue);
-    transition: width 0.3s ease;
-  }
-  
-  .tab:hover {
-    background: rgba(0,212,255,0.1);
-    border-color: var(--neon-blue);
-  }
-  
-  .tab:hover::before {
-    width: 100%;
-  }
-  
-  .tab.active {
-    background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(124,58,237,0.1));
-    border-color: var(--neon-blue);
-    color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0,212,255,0.3);
-  }
-  
-  .tab.active::before {
-    width: 100%;
-  }
-  
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-  
-  /* Details */
-  details {
-    border: 1px solid rgba(0,212,255,0.2);
-    border-radius: 12px;
-    padding: 16px;
-    margin: 12px 0;
-    background: rgba(15,25,45,0.4);
-    backdrop-filter: blur(10px);
-  }
-  
-  details summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--neon-blue);
-    margin-bottom: 12px;
-    position: relative;
-    list-style: none;
-  }
-  
-  details summary::before {
-    content: '▶';
-    position: absolute;
-    left: -20px;
-    transition: transform 0.3s ease;
-  }
-  
-  details[open] summary::before {
-    transform: rotate(90deg);
-  }
-  
-  details[open] {
-    animation: details-open 0.3s ease;
-  }
-  
-  @keyframes details-open {
-    0% { opacity: 0.5; transform: translateY(-4px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  
-  /* Progress bars */
-  .progress-bar {
-    background: rgba(15,25,45,0.8);
-    border-radius: 8px;
-    height: 8px;
-    overflow: hidden;
-    margin: 8px 0;
-  }
-  
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
-    border-radius: 8px;
-    transition: width 1s ease;
-    box-shadow: 0 0 10px rgba(0,212,255,0.5);
-  }
-  
-  /* Toolbar */
-  .toolbar {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  
-  .icon-btn {
-    background: rgba(15,25,45,0.8);
-    border: 1px solid rgba(0,212,255,0.3);
-    border-radius: 8px;
-    padding: 8px;
-    cursor: pointer;
-    color: var(--neon-blue);
-    font-size: 14px;
-    transition: all 0.3s ease;
-  }
-  
-  .icon-btn:hover {
-    background: rgba(0,212,255,0.1);
-    box-shadow: 0 0 12px rgba(0,212,255,0.4);
-    transform: translateY(-1px);
-  }
-  
-  /* Form */
-  form.grid input, form.grid textarea, form.grid select {
-    background: rgba(15,25,45,0.6);
-    border: 1px solid rgba(0,212,255,0.3);
-    color: var(--text);
-    padding: 14px;
-    border-radius: 10px;
-    outline: none;
-    font-family: inherit;
-    transition: all 0.3s ease;
-  }
-  
-  form.grid input:focus, form.grid textarea:focus, form.grid select:focus {
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0,212,255,0.2);
-    background: rgba(15,25,45,0.8);
-  }
-  
-  /* Tables */
-  .spec-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    background: rgba(15,25,45,0.4);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  .spec-table th {
-    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-    color: white;
-    padding: 16px;
-    text-align: left;
-    font-weight: 700;
-  }
-  
-  .spec-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(0,212,255,0.1);
-  }
-  
-  .spec-table tr:hover {
-    background: rgba(0,212,255,0.05);
-  }
-  
-  /* Pulse Animation */
-  .pulse {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  
-  @keyframes pulse-glow {
-    0%, 100% { 
-      box-shadow: 0 0 20px rgba(16,185,129,0.4);
-    }
-    50% { 
-      box-shadow: 0 0 35px rgba(16,185,129,0.7), 0 0 50px rgba(16,185,129,0.3);
-    }
-  }
-  
-  /* Status indicators */
-  .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  
-  .status.active {
-    background: rgba(16,185,129,0.2);
-    color: var(--neon-green);
-  }
-  
-  .status.warning {
-    background: rgba(245,158,11,0.2);
-    color: var(--warn);
-  }
-  
-  .status.critical {
-    background: rgba(239,68,68,0.2);
-    color: var(--critical);
-  }
-  
-  /* Back to top */
-  #topBtn {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    z-index: 1000;
-    border: none;
-    border-radius: 50%;
-    width: 52px;
-    height: 52px;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-    color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 25px rgba(0,212,255,0.4);
-  }
-  
-  #topBtn.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  #topBtn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 35px rgba(0,212,255,0.6), 0 8px 25px rgba(0,0,0,0.3);
-  }
-  
-  /* Alert boxes */
-  .alert {
-    padding: 16px;
-    border-radius: 12px;
-    margin: 16px 0;
-    border-left: 4px solid;
-    position: relative;
-    backdrop-filter: blur(10px);
-  }
-  
-  .alert.info {
-    background: rgba(0,212,255,0.1);
-    border-color: var(--neon-blue);
-    color: var(--text);
-  }
-  
-  .alert.success {
-    background: rgba(16,185,129,0.1);
-    border-color: var(--neon-green);
-    color: var(--text);
-  }
-  
-  .alert.warning {
-    background: rgba(245,158,11,0.1);
-    border-color: var(--warn);
-    color: var(--text);
-  }
-  
-  /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: rgba(15,25,45,0.3);
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--neon-purple), var(--neon-blue));
-  }
-  
-  /* Responsive text */
-  @media (max-width: 768px) {
-    h2 { font-size: 1.4rem; }
-    .feature { flex-direction: column; text-align: center; }
-    .feature .icon { width: 40px; height: 40px; font-size: 20px; }
-  }
+:root {
+  --red:#E53E3E;--red-d:#C53030;--red-l:#FFF5F5;
+  --green:#2F855A;--green-m:#38A169;--green-l:#F0FFF4;
+  --yellow:#B7791F;--yellow-l:#FFFFF0;
+  --blue:#2B6CB0;--blue-m:#3182CE;--blue-l:#EBF8FF;
+  --purple:#6B46C1;--purple-l:#FAF5FF;
+  --orange:#C05621;--orange-l:#FFFAF0;
+  --g50:#F7FAFC;--g100:#EDF2F7;--g200:#E2E8F0;--g300:#CBD5E0;
+  --g400:#A0AEC0;--g500:#718096;--g700:#2D3748;--g900:#1A202C;
+  --white:#FFFFFF;
+  --font:'Noto Sans TC',sans-serif;
+  --sh:0 2px 12px rgba(0,0,0,0.08);
+  --sh-lg:0 8px 32px rgba(0,0,0,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;font-family:var(--font);background:#0f1117;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+
+/* Phone */
+.phone{width:390px;height:844px;background:var(--g50);border-radius:44px;overflow:hidden;
+  box-shadow:0 0 0 10px #1c1c1e,0 0 0 12px #3a3a3c,0 32px 80px rgba(0,0,0,0.7);
+  display:flex;flex-direction:column;position:relative;}
+
+/* Status bar */
+.sbar{flex-shrink:0;height:48px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;font-size:13px;font-weight:700;position:relative;z-index:10;
+  color:white;transition:color 0.3s;}
+.sbar.dark{color:var(--g700);}
+.sbar .notch{position:absolute;left:50%;top:8px;transform:translateX(-50%);
+  width:120px;height:32px;background:#0f1117;border-radius:20px;}
+
+/* Screens */
+.screens{flex:1;position:relative;overflow:hidden;}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;transform:translateX(100%);
+  transition:transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;
+  background:var(--g50);}
+.page::-webkit-scrollbar{display:none;}
+.page.active{transform:translateX(0);}
+.page.slide-left{transform:translateX(-100%);}
+
+/* Bottom nav */
+.bnav{flex-shrink:0;height:82px;background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);
+  border-top:1px solid var(--g200);display:flex;align-items:flex-start;padding-top:8px;position:relative;z-index:50;}
+.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  border:none;background:none;cursor:pointer;font-family:var(--font);padding:8px 4px;position:relative;}
+.nbtn .ni{font-size:23px;transition:transform 0.2s;}
+.nbtn .nl{font-size:10px;font-weight:600;color:var(--g400);transition:color 0.2s;}
+.nbtn.on .nl{color:var(--blue-m);}
+.nbtn.on .ni{transform:scale(1.12);}
+.nbtn::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:0;height:3px;border-radius:2px;background:var(--blue-m);transition:width 0.25s;}
+.nbtn.on::after{width:24px;}
+
+/* Shared hero */
+.hero-block{padding:18px 22px 26px;color:white;position:relative;overflow:hidden;}
+.hero-block::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;
+  border-radius:50%;background:rgba(255,255,255,0.06);}
+.hb-row{display:flex;align-items:center;gap:10px;}
+.back-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.22);
+  border:none;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;
+  color:white;flex-shrink:0;transition:background 0.15s;}
+.back-btn:active{background:rgba(255,255,255,0.35);}
+.hb-title{font-size:21px;font-weight:900;}
+.hb-sub{font-size:13px;opacity:0.8;margin-top:2px;}
+.hb-badge{display:inline-block;background:rgba(255,255,255,0.2);padding:5px 14px;
+  border-radius:20px;font-size:13px;font-weight:600;margin-top:12px;}
+
+/* Cards/rows common */
+.card{background:var(--white);border-radius:16px;box-shadow:var(--sh);}
+.sec-t{font-size:14px;font-weight:800;color:var(--g700);padding:14px 22px 8px;}
+
+/* Toast */
+.toast{position:absolute;bottom:96px;left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--g900);color:white;padding:10px 20px;border-radius:20px;
+  font-size:13px;font-weight:600;white-space:nowrap;opacity:0;
+  transition:opacity 0.28s,transform 0.28s;pointer-events:none;z-index:400;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Modal */
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(5px);
+  display:none;align-items:flex-end;z-index:300;}
+.modal-bg.on{display:flex;}
+.modal-sheet{background:var(--white);border-radius:24px 24px 0 0;width:100%;padding:22px 22px 36px;
+  animation:slideUp 0.3s cubic-bezier(0.25,0.46,0.45,0.94);}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.m-handle{width:40px;height:4px;background:var(--g200);border-radius:2px;margin:0 auto 18px;}
+.m-title{font-size:19px;font-weight:900;color:var(--g700);}
+.m-sub{font-size:13px;color:var(--g500);margin-top:3px;margin-bottom:16px;}
+
+/* ════ HOME ════ */
+#p-home .hero-block{background:linear-gradient(140deg,#1a365d 0%,#2b6cb0 60%,#4299e1 100%);}
+.home-greet{font-size:14px;opacity:0.75;margin-bottom:2px;}
+.home-name{font-size:28px;font-weight:900;margin-bottom:14px;}
+.home-status{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(10px);padding:7px 16px;border-radius:20px;font-size:14px;font-weight:600;}
+.h-dot{width:8px;height:8px;border-radius:50%;background:#68D391;box-shadow:0 0 6px #68D391;}
+.sos-wrap{padding:18px 22px 6px;}
+.sos-big{width:100%;background:linear-gradient(145deg,#FC5C5C,#E53E3E 50%,#C53030);
+  border:none;border-radius:22px;padding:26px 22px;display:flex;align-items:center;justify-content:center;
+  gap:18px;cursor:pointer;font-family:var(--font);color:white;
+  box-shadow:0 8px 28px rgba(229,62,62,0.5),inset 0 1px 0 rgba(255,255,255,0.2);
+  transition:transform 0.12s,box-shadow 0.12s;position:relative;overflow:hidden;}
+.sos-big::before{content:'';position:absolute;inset:0;border-radius:22px;border:2px solid rgba(255,255,255,0.22);}
+.sos-big:active{transform:scale(0.97);box-shadow:0 4px 14px rgba(229,62,62,0.4);}
+.sos-emoji{font-size:42px;animation:sosPulse 2.2s ease-in-out infinite;}
+@keyframes sosPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.sos-label{font-size:29px;font-weight:900;letter-spacing:3px;}
+.sos-sub{font-size:12px;opacity:0.82;margin-top:3px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 22px 20px;}
+.fcard{background:var(--white);border-radius:16px;padding:17px 15px;cursor:pointer;border:none;
+  text-align:left;box-shadow:var(--sh);transition:transform 0.15s,box-shadow 0.15s;
+  font-family:var(--font);position:relative;overflow:hidden;}
+.fcard:active{transform:scale(0.96);box-shadow:none;}
+.fc-bar{position:absolute;top:0;left:0;right:0;height:4px;border-radius:16px 16px 0 0;}
+.fc-icon{font-size:29px;margin-bottom:8px;display:block;}
+.fc-t{font-size:14px;font-weight:800;color:var(--g700);}
+.fc-s{font-size:11px;color:var(--g500);margin-top:3px;}
+.badge-r{background:var(--red);color:white;font-size:9px;font-weight:800;padding:2px 5px;border-radius:6px;margin-left:3px;}
+
+/* ── Account switcher ── */
+.acct-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.18);
+  border:1.5px solid rgba(255,255,255,0.28);border-radius:20px;padding:5px 10px 5px 6px;
+  cursor:pointer;font-family:var(--font);color:white;font-size:12px;font-weight:700;
+  transition:background 0.15s;flex-shrink:0;}
+.acct-btn:active{background:rgba(255,255,255,0.28);}
+.acct-avatar{font-size:20px;line-height:1;}
+.acct-chevron{font-size:10px;opacity:0.8;}
+/* dropdown */
+.acct-menu{position:absolute;top:54px;right:16px;z-index:200;
+  background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);
+  min-width:180px;overflow:hidden;
+  transform:scale(0.92) translateY(-8px);opacity:0;pointer-events:none;
+  transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);transform-origin:top right;}
+.acct-menu.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
+.acct-menu-title{font-size:10px;font-weight:800;color:var(--g400);padding:12px 14px 6px;text-transform:uppercase;letter-spacing:0.6px;}
+.acct-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background 0.12s;}
+.acct-item:active{background:var(--g100);}
+.acct-item.active-acct{background:var(--blue-l);}
+.acct-item .ai-av{font-size:24px;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--g100);}
+.acct-item .ai-info .ai-name{font-size:14px;font-weight:800;color:var(--g700);}
+.acct-item .ai-info .ai-role{font-size:11px;color:var(--g500);}
+.acct-item .ai-check{margin-left:auto;color:var(--blue-m);font-size:16px;font-weight:800;}
+.acct-divider{height:1px;background:var(--g100);margin:4px 0;}
+.acct-add{display:flex;align-items:center;gap:10px;padding:10px 14px 14px;cursor:pointer;color:var(--blue-m);font-size:13px;font-weight:700;}
+
+/* ════ SOS ════ */
+#p-sos{background:linear-gradient(170deg,#fff5f5 0%,#fed7d7 50%,#fc8181 100%);}
+.sos-center{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 22px;gap:22px;flex:1;}
+.ring-btn{width:190px;height:190px;border-radius:50%;background:var(--red);border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-family:var(--font);color:white;
+  box-shadow:0 0 0 20px rgba(229,62,62,0.18),0 0 0 40px rgba(229,62,62,0.09),0 16px 56px rgba(229,62,62,0.55);
+  animation:ringPulse 2s ease-in-out infinite;transition:transform 0.15s;}
+.ring-btn:active{transform:scale(0.93);}
+@keyframes ringPulse{
+  0%,100%{box-shadow:0 0 0 20px rgba(229,62,62,0.18),0 0 0 40px rgba(229,62,62,0.09),0 16px 56px rgba(229,62,62,0.55);}
+  50%{box-shadow:0 0 0 28px rgba(229,62,62,0.22),0 0 0 56px rgba(229,62,62,0.1),0 16px 56px rgba(229,62,62,0.65);}}
+.ring-icon{font-size:52px;}.ring-text{font-size:29px;font-weight:900;letter-spacing:4px;}.ring-sub{font-size:12px;opacity:0.85;}
+.contact-list{width:100%;display:flex;flex-direction:column;gap:8px;}
+.cc{background:rgba(255,255,255,0.65);backdrop-filter:blur(10px);border-radius:14px;
+  padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  border:2px solid transparent;transition:all 0.18s;}
+.cc:active{transform:scale(0.97);background:rgba(255,255,255,0.85);}
+.cc-av{font-size:28px;}.cc-n{font-size:15px;font-weight:800;color:var(--g700);}.cc-r{font-size:12px;color:var(--g500);}
+.cc-actions{margin-left:auto;display:flex;gap:7px;}
+.cc-act-btn{width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:17px;transition:transform 0.15s;}
+.cc-act-btn:active{transform:scale(0.88);}
+.cc-call{background:#E6FFF2;}.cc-line{background:#E6F7FF;}
+.cc-sent{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;display:none;}
+.cc-sent.green{background:#E6FFF2;color:var(--green);display:inline-block;}
+.cc-sent.blue{background:#E6F7FF;color:var(--blue-m);display:inline-block;}
+
+.sos-state{display:none;flex-direction:column;align-items:center;gap:16px;text-align:center;
+  padding:40px 22px;flex:1;}
+.sos-state.on{display:flex;}
+.spin{animation:spin360 1s linear infinite;font-size:52px;display:block;}
+@keyframes spin360{to{transform:rotate(360deg)}}
+.st-t{font-size:19px;font-weight:800;color:var(--g700);}.st-s{font-size:14px;color:var(--g500);line-height:1.8;}
+.done-ico{font-size:62px;}.done-t{font-size:21px;font-weight:900;color:var(--green-m);}
+.row-btns{display:flex;gap:12px;width:100%;}
+.btn-o{flex:1;padding:13px;border-radius:12px;border:2px solid var(--blue-m);color:var(--blue-m);
+  background:white;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.btn-s{flex:1;padding:13px;border-radius:12px;background:var(--blue-m);color:white;
+  border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);}
+
+/* ── Calling overlay ── */
+.calling-overlay{position:absolute;inset:0;z-index:500;
+  background:linear-gradient(160deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+  display:none;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:60px 30px 70px;}
+.calling-overlay.on{display:flex;}
+.call-status{font-size:14px;color:rgba(255,255,255,0.6);font-weight:600;letter-spacing:1px;}
+.call-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;}
+.call-avatar{width:110px;height:110px;border-radius:50%;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;align-items:center;justify-content:center;font-size:52px;
+  box-shadow:0 0 0 8px rgba(255,255,255,0.08),0 0 0 16px rgba(255,255,255,0.04);
+  animation:callPulse 1.8s ease-in-out infinite;}
+@keyframes callPulse{0%,100%{box-shadow:0 0 0 8px rgba(255,255,255,0.08),0 0 0 16px rgba(255,255,255,0.04);}
+  50%{box-shadow:0 0 0 14px rgba(255,255,255,0.1),0 0 0 28px rgba(255,255,255,0.05);}}
+.call-name{font-size:28px;font-weight:900;color:white;}
+.call-rel{font-size:14px;color:rgba(255,255,255,0.55);}
+.call-timer{font-size:20px;font-weight:600;color:rgba(255,255,255,0.8);
+  font-variant-numeric:tabular-nums;letter-spacing:2px;}
+.call-btns{display:flex;gap:28px;align-items:center;}
+.call-btn-round{width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  transition:transform 0.15s;font-family:var(--font);}
+.call-btn-round:active{transform:scale(0.9);}
+.cb-mute{background:rgba(255,255,255,0.15);color:white;}
+.cb-end{width:72px;height:72px;background:#E53E3E;color:white;font-size:22px;
+  box-shadow:0 4px 20px rgba(229,62,62,0.5);}
+.cb-speaker{background:rgba(255,255,255,0.15);color:white;}
+.call-btn-label{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.call-btn-label span{font-size:11px;color:rgba(255,255,255,0.5);font-weight:600;}
+
+/* ── LINE notify overlay ── */
+.line-overlay{position:absolute;inset:0;z-index:500;
+  background:rgba(0,0,0,0);pointer-events:none;
+  display:flex;flex-direction:column;gap:10px;padding:60px 16px 0;
+  transition:background 0.3s;}
+.line-overlay.on{pointer-events:all;background:rgba(0,0,0,0.35);backdrop-filter:blur(3px);}
+.line-notif{background:white;border-radius:16px;padding:14px 16px;
+  display:flex;gap:12px;align-items:flex-start;
+  transform:translateY(-120px);opacity:0;
+  transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1),opacity 0.35s;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+.line-notif.show{transform:translateY(0);opacity:1;}
+.ln-logo{width:36px;height:36px;border-radius:10px;background:#06C755;
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ln-body{flex:1;}
+.ln-app{font-size:10px;font-weight:700;color:var(--g500);margin-bottom:2px;}
+.ln-name{font-size:13px;font-weight:800;color:var(--g700);}
+.ln-msg{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.4;}
+.ln-time{font-size:10px;color:var(--g400);flex-shrink:0;margin-top:2px;}
+.ln-dismiss{display:block;width:calc(100% - 32px);margin:6px 16px 0;
+  padding:14px;border-radius:14px;background:white;
+  border:2px solid var(--g200);font-size:14px;font-weight:700;color:var(--g700);
+  cursor:pointer;font-family:var(--font);
+  transform:translateY(20px);opacity:0;transition:all 0.35s 0.6s;}
+.line-overlay.on .ln-dismiss{transform:translateY(0);opacity:1;}
+
+/* ════ MED ════ */
+#p-med .hero-block{background:linear-gradient(135deg,#1C4532,#276749 60%,#38A169);}
+.time-grp{padding:14px 22px 0;}
+.time-lbl{font-size:13px;font-weight:800;color:var(--g700);margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;}
+.time-lbl::after{content:'';flex:1;height:1px;background:var(--g200);}
+.med-row{background:var(--white);border-radius:14px;padding:13px 15px;
+  display:flex;align-items:center;gap:12px;box-shadow:var(--sh);margin-bottom:8px;cursor:pointer;}
+.med-ico{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.mi-g{background:var(--green-l);}.mi-y{background:#FFFFF0;}.mi-r{background:var(--red-l);}
+.med-n{font-size:14px;font-weight:800;color:var(--g700);}.med-d{font-size:11px;color:var(--g500);margin-top:2px;}
+.med-tag{padding:7px 12px;border-radius:20px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:var(--font);white-space:nowrap;}
+.mt-ok{background:var(--green-l);color:var(--green);}
+.mt-act{background:var(--green-m);color:white;}
+.mt-pend{background:#FFFFF0;color:var(--yellow);}
+.warn-box{margin:10px 22px;background:var(--red-l);border-radius:13px;padding:13px 15px;border:2px solid #FC8181;}
+.wb-t{font-size:13px;font-weight:800;color:var(--red-d);margin-bottom:2px;}
+.wb-s{font-size:12px;color:var(--g500);margin-bottom:10px;}
+.wb-btns{display:flex;gap:9px;}
+.wb-y{flex:2;padding:10px;border-radius:9px;background:var(--green-m);color:white;border:none;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--font);}
+.wb-n{flex:1;padding:10px;border-radius:9px;background:var(--g100);color:var(--g700);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.m-pill{background:var(--green-l);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.m-pill-n{font-size:16px;font-weight:800;color:var(--g700);}.m-pill-d{font-size:12px;color:var(--g500);}
+.m-acts{display:flex;gap:10px;}
+.ma-p{flex:2;padding:15px;border-radius:13px;background:var(--green-m);color:white;border:none;font-size:15px;font-weight:900;cursor:pointer;font-family:var(--font);}
+.ma-s{flex:1;padding:15px;border-radius:13px;background:var(--g100);color:var(--g500);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+
+/* ════ REPORT ════ */
+#p-report .hero-block{background:linear-gradient(135deg,#1a365d,#2C5282 60%,#3182CE);}
+.rpt-stats{display:flex;gap:9px;margin-top:12px;}
+.rpt-st{flex:1;background:rgba(255,255,255,0.18);border-radius:11px;padding:9px 7px;text-align:center;}
+.rpt-v{font-size:19px;font-weight:900;}.rpt-l{font-size:9px;opacity:0.75;margin-top:1px;}
+.chart-card{background:var(--white);border-radius:16px;margin:12px 22px;padding:16px;box-shadow:var(--sh);}
+.cc-t{font-size:14px;font-weight:800;color:var(--g700);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.cc-t span{font-size:10px;font-weight:500;color:var(--g400);}
+.bar-chart{display:flex;align-items:flex-end;gap:4px;height:96px;position:relative;padding-left:28px;}
+.y-ax{position:absolute;left:0;top:0;bottom:16px;display:flex;flex-direction:column;justify-content:space-between;font-size:9px;color:var(--g400);}
+.bar-grp{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;}
+.bar-pair{display:flex;align-items:flex-end;gap:2px;width:100%;height:80px;}
+.bar-sys{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(to top,#E53E3E,#FC8181);align-self:flex-end;}
+.bar-sys.ok{background:linear-gradient(to top,#3182CE,#63B3ED);}
+.bar-dia{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(to top,#90CDF4,#BEE3F8);align-self:flex-end;}
+.bar-d{font-size:9px;color:var(--g400);margin-top:4px;}
+.legend{display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--g500);}
+.ld{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;}
+.status-alert{margin:0 22px 10px;background:var(--red-l);border-radius:13px;padding:13px 15px;
+  display:flex;align-items:center;gap:11px;border-left:4px solid var(--red);}
+.sa-t{font-size:13px;font-weight:800;color:var(--red-d);}.sa-s{font-size:11px;color:var(--g500);margin-top:2px;}
+.rpt-acts{display:flex;gap:12px;padding:0 22px 20px;}
+.rpt-btn{flex:1;padding:12px;border-radius:11px;border:2px solid var(--blue-m);color:var(--blue-m);
+  background:white;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);
+  display:flex;align-items:center;justify-content:center;gap:5px;}
+
+/* ════ STRESS ════ */
+#p-stress .hero-block{background:linear-gradient(135deg,#322659,#553C9A 60%,#805AD5);}
+.emo-row{display:flex;justify-content:space-between;padding:0 22px;}
+.emo-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 5px;
+  border-radius:14px;cursor:pointer;border:none;background:none;font-family:var(--font);transition:background 0.15s;}
+.emo-btn .ef{font-size:33px;transition:transform 0.2s;}.emo-btn .el{font-size:10px;color:var(--g500);font-weight:600;}
+.emo-btn.sel{background:var(--purple-l);}.emo-btn.sel .ef{transform:scale(1.18);}.emo-btn.sel .el{color:var(--purple);}
+.sub-btn{display:block;width:calc(100% - 44px);margin:12px 22px;padding:15px;
+  background:linear-gradient(135deg,#553C9A,#805AD5);color:white;border:none;border-radius:13px;
+  font-size:15px;font-weight:900;cursor:pointer;font-family:var(--font);
+  box-shadow:0 6px 18px rgba(128,90,213,0.4);transition:transform 0.12s;}
+.sub-btn:active{transform:scale(0.97);}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.trend-card{background:var(--white);border-radius:16px;margin:0 22px 10px;padding:15px;box-shadow:var(--sh);}
+.tc-t{font-size:13px;font-weight:800;color:var(--g700);margin-bottom:11px;}
+.td-row{display:flex;gap:5px;}
+.td-g2{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.td-b{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.td-bg{background:var(--green-l);}.td-by{background:#FFFFF0;}.td-br{background:var(--red-l);}
+.td-l{font-size:9px;color:var(--g400);font-weight:600;}
+.alert-strip{margin:0 22px 20px;background:var(--red-l);border-left:4px solid var(--red);
+  border-radius:0 12px 12px 0;padding:12px 15px;display:flex;gap:10px;align-items:center;}
+.as-t{font-size:13px;font-weight:800;color:var(--red-d);}.as-s{font-size:11px;color:var(--g500);margin-top:2px;}
+
+/* ════ RESPITE ════ */
+#p-respite .hero-block{background:linear-gradient(135deg,#652B19,#9C4221 60%,#C05621);}
+.week-scroll{display:flex;gap:6px;padding:12px 22px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.week-scroll::-webkit-scrollbar{display:none;}
+.w-d{flex-shrink:0;width:44px;background:var(--white);border-radius:11px;padding:9px 3px;text-align:center;box-shadow:var(--sh);}
+.w-d.has{border-top:3px solid var(--orange);}
+.w-d.selected-day{background:var(--orange);border-top:3px solid var(--orange);}
+.w-d.selected-day .wd-l{color:rgba(255,255,255,0.8);}
+.w-d.selected-day .wd-t{color:white;}
+.w-d.selected-day .wd-e{filter:none;}
+.wd-badge-count{position:absolute;top:-4px;right:-4px;width:16px;height:16px;
+  background:var(--red);border-radius:50%;font-size:9px;font-weight:900;color:white;
+  display:flex;align-items:center;justify-content:center;}
+.pi-del{width:28px;height:28px;border-radius:50%;background:var(--red-l);border:none;
+  color:var(--red);font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:background 0.15s;}
+.pi-del:active{background:var(--red);color:white;}
+.wd-l{font-size:10px;font-weight:800;color:var(--g500);margin-bottom:5px;}
+.wd-e{width:28px;height:28px;border-radius:50%;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.we-o{background:#FEF3C7;}.we-e{background:var(--g100);}
+.wd-t{font-size:8px;color:var(--g700);font-weight:600;line-height:1.3;}
+.plan-sec{padding:10px 22px 0;}
+.plan-t{font-size:13px;font-weight:800;color:var(--g700);margin-bottom:9px;}
+.plan-item{background:var(--white);border-radius:13px;padding:13px 15px;
+  display:flex;align-items:center;gap:11px;box-shadow:var(--sh);margin-bottom:7px;cursor:pointer;}
+.pi-ico{width:44px;height:44px;border-radius:11px;background:#FFF3E0;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.pi-n{font-size:14px;font-weight:800;color:var(--g700);}.pi-d{font-size:11px;color:var(--g500);margin-top:2px;}
+.pi-arr{font-size:17px;color:var(--g300);margin-left:auto;}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:7px;
+  width:calc(100% - 44px);margin:4px 22px;padding:14px;
+  background:white;border:2px dashed var(--g300);border-radius:13px;
+  font-size:14px;font-weight:700;color:var(--g500);cursor:pointer;font-family:var(--font);}
+.remind-banner{margin:10px 22px 22px;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);
+  border-radius:13px;padding:13px 15px;display:flex;gap:11px;align-items:center;}
+.rb-ico{font-size:24px;}
+.rb-t{font-size:12px;font-weight:800;color:#744210;}.rb-s{font-size:11px;color:#92400E;margin-top:2px;}
+.form-field{margin-bottom:14px;}
+.ff-label{font-size:12px;font-weight:700;color:var(--g500);margin-bottom:6px;}
+.ff-input{width:100%;padding:12px 14px;border-radius:12px;border:2px solid var(--g200);
+  font-size:15px;font-family:var(--font);color:var(--g700);outline:none;
+  transition:border-color 0.2s;background:var(--g50);}
+.ff-input:focus{border-color:var(--orange);}
+.icon-picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.icon-opt{width:44px;height:44px;border-radius:12px;border:2px solid var(--g200);
+  background:var(--g50);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;font-family:var(--font);}
+.icon-opt.sel{border-color:var(--orange);background:#FFF7ED;transform:scale(1.1);}
+.day-picker{display:flex;gap:6px;margin-bottom:4px;}
+.day-opt{flex:1;padding:8px 0;border-radius:10px;border:2px solid var(--g200);
+  background:var(--g50);font-size:13px;font-weight:800;color:var(--g500);
+  cursor:pointer;font-family:var(--font);transition:all 0.15s;}
+.day-opt.sel{border-color:var(--orange);background:var(--orange);color:white;transform:scale(1.05);}
+.day-picker{display:flex;gap:6px;}
+.day-opt{flex:1;padding:8px 2px;border-radius:10px;border:2px solid var(--g200);
+  background:var(--g50);font-size:13px;font-weight:700;color:var(--g500);
+  cursor:pointer;font-family:var(--font);transition:all 0.15s;}
+.day-opt.sel{border-color:var(--orange);background:#FFF7ED;color:var(--orange);transform:scale(1.05);}
+.w-d.sel-day{border:2px solid var(--orange);background:#FFF7ED;}
 </style>
 </head>
 <body>
-  <!-- 粒子背景 -->
-  <div class="particles" id="particles"></div>
+<div class="phone">
 
-  <header>
-    <div class="brand">
-      <div class="logo">🛡️</div>
-      GWall 4.0 網路安全解決方案
+  <div class="sbar" id="sbar">
+    <span>9:41</span>
+    <div class="notch"></div>
+    <span>📶 🔋</span>
+  </div>
+
+  <div class="screens">
+
+    <!-- HOME -->
+    <div class="page active" id="p-home">
+      <div class="hero-block" style="position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="home-greet" id="home-greet">☀️ 早安</div>
+            <div class="home-name" id="home-name">阿嬤</div>
+          </div>
+          <!-- Account switcher -->
+          <button class="acct-btn" id="acct-btn" onclick="openAcctMenu()">
+            <span class="acct-avatar" id="acct-avatar">👵</span>
+            <span class="acct-chevron">▾</span>
+          </button>
+        </div>
+        <div class="home-status"><div class="h-dot"></div>今日狀態：正常</div>
+        <!-- Account dropdown -->
+        <div class="acct-menu" id="acct-menu">
+          <div class="acct-menu-title">切換帳號</div>
+          <div class="acct-item active-acct" onclick="switchAcct(0)">
+            <div class="ai-av">👵</div>
+            <div class="ai-info"><div class="ai-name">阿嬤</div><div class="ai-role">照護對象</div></div>
+            <span class="ai-check">✓</span>
+          </div>
+          <div class="acct-item" onclick="switchAcct(1)">
+            <div class="ai-av">👩</div>
+            <div class="ai-info"><div class="ai-name">小芳（女兒）</div><div class="ai-role">照顧者</div></div>
+          </div>
+          <div class="acct-item" onclick="switchAcct(2)">
+            <div class="ai-av">👨</div>
+            <div class="ai-info"><div class="ai-name">阿明（兒子）</div><div class="ai-role">照顧者</div></div>
+          </div>
+          <div class="acct-divider"></div>
+          <div class="acct-add" onclick="showToast('➕ 新增帳號功能即將上線')">
+            <span style="font-size:18px;">＋</span> 新增帳號
+          </div>
+        </div>
+      </div>
+      <div class="sos-wrap">
+        <button class="sos-big" onclick="navTo('p-sos','fwd')">
+          <span class="sos-emoji">🆘</span>
+          <div><div class="sos-label">SOS</div><div class="sos-sub">緊急求助</div></div>
+        </button>
+      </div>
+      <div class="sec-t">快捷功能</div>
+      <div class="grid2">
+        <button class="fcard" onclick="navTo('p-med','fwd')">
+          <div class="fc-bar" style="background:var(--green-m)"></div>
+          <span class="fc-icon">💊</span><div class="fc-t">用藥提醒</div>
+          <div class="fc-s" id="home-med-sub">今日 3 次</div>
+        </button>
+        <button class="fcard" onclick="navTo('p-report','fwd')">
+          <div class="fc-bar" style="background:var(--blue-m)"></div>
+          <span class="fc-icon">📊</span><div class="fc-t">健康報表</div>
+          <div class="fc-s">血壓<span class="badge-r">偏高</span></div>
+        </button>
+        <button class="fcard" onclick="navTo('p-stress','fwd')">
+          <div class="fc-bar" style="background:var(--purple)"></div>
+          <span class="fc-icon">🧠</span><div class="fc-t">壓力燈號</div>
+          <div class="fc-s" id="home-stress-sub">今日未填</div>
+        </button>
+        <button class="fcard" onclick="navTo('p-respite','fwd')">
+          <div class="fc-bar" style="background:var(--orange)"></div>
+          <span class="fc-icon">📅</span><div class="fc-t">喘息計畫</div><div class="fc-s">明日：日照</div>
+        </button>
+      </div>
     </div>
-    <div class="search">
-      <input id="searchInput" placeholder="搜尋章節 / 關鍵字（例如：VPN、IPS、零信任、高可用性）"/>
+
+    <!-- SOS -->
+    <div class="page" id="p-sos" style="background:linear-gradient(170deg,#fff5f5,#fed7d7 50%,#fc8181 100%)">
+      <div class="hero-block" style="background:transparent;padding-bottom:12px;">
+        <div class="hb-row">
+          <button class="back-btn" style="background:rgba(229,62,62,0.18);color:var(--red-d);" onclick="goBack()">←</button>
+          <div><div class="hb-title" style="color:var(--red-d);">緊急求助</div></div>
+        </div>
+      </div>
+      <div class="sos-center" id="sos-idle">
+        <button class="ring-btn" onclick="triggerSOS()">
+          <span class="ring-icon">🆘</span>
+          <span class="ring-text">SOS</span>
+          <span class="ring-sub">按下求助</span>
+        </button>
+        <div class="contact-list">
+          <div style="font-size:12px;font-weight:800;color:#742A2A;margin-bottom:4px;">📋 點擊聯絡人直接聯繫</div>
+          <!-- Contact 1: daughter - call + LINE -->
+          <div class="cc" id="cc1">
+            <span class="cc-av">👩</span>
+            <div style="flex:1">
+              <div class="cc-n">女兒（小芳）</div>
+              <div class="cc-r" id="cc1-status">LINE + 電話</div>
+            </div>
+            <div class="cc-actions">
+              <button class="cc-act-btn cc-line" onclick="sendLine('cc1','小芳')" title="傳 LINE">💬</button>
+              <button class="cc-act-btn cc-call" onclick="startCall('女兒（小芳）','👩','0912-345-678')" title="撥打電話">📞</button>
+            </div>
+          </div>
+          <!-- Contact 2: son - LINE + 電話 -->
+          <div class="cc" id="cc2">
+            <span class="cc-av">👨</span>
+            <div style="flex:1">
+              <div class="cc-n">兒子（阿明）</div>
+              <div class="cc-r" id="cc2-status">LINE 通知</div>
+            </div>
+            <div class="cc-actions">
+              <button class="cc-act-btn cc-line" onclick="sendLine('cc2','阿明')" title="傳 LINE">💬</button>
+              <button class="cc-act-btn cc-call" onclick="startCall('兒子（阿明）','👨','0923-456-789')" title="撥打電話">📞</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sos-state" id="sos-sending">
+        <span class="spin">⏳</span>
+        <div class="st-t">發送中…</div>
+        <div class="st-s">📍 正在取得您的位置<br>📲 傳送 LINE 通知給家人</div>
+      </div>
+      <div class="sos-state" id="sos-done">
+        <span class="done-ico">✅</span>
+        <div class="done-t">已通知家人！</div>
+        <div class="st-s">👨‍👩‍👧 LINE 已送出<br>📍 位置已分享</div>
+        <div class="row-btns">
+          <button class="btn-o">查看位置</button>
+          <button class="btn-s" onclick="resetSOS();goBack()">返回首頁</button>
+        </div>
+      </div>
+
+      <!-- Calling overlay -->
+      <div class="calling-overlay" id="calling-overlay">
+        <div class="call-status" id="call-status-txt">正在撥號…</div>
+        <div class="call-avatar-wrap">
+          <div class="call-avatar" id="call-avatar">👩</div>
+          <div class="call-name" id="call-name">女兒（小芳）</div>
+          <div class="call-rel" id="call-number">0912-345-678</div>
+        </div>
+        <div class="call-timer" id="call-timer" style="visibility:hidden;">00:00</div>
+        <div class="call-btns">
+          <div class="call-btn-label">
+            <button class="call-btn-round cb-mute" id="btn-mute" onclick="toggleMute()">🎙️</button>
+            <span>靜音</span>
+          </div>
+          <div class="call-btn-label">
+            <button class="call-btn-round cb-end" onclick="endCall()">📵</button>
+            <span style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;">掛斷</span>
+          </div>
+          <div class="call-btn-label">
+            <button class="call-btn-round cb-speaker" id="btn-speaker" onclick="toggleSpeaker()">🔊</button>
+            <span>擴音</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINE overlay -->
+      <div class="line-overlay" id="line-overlay" onclick="dismissLine()">
+        <div class="line-notif" id="line-notif-1">
+          <div class="ln-logo">💬</div>
+          <div class="ln-body">
+            <div class="ln-app">LINE · 剛剛</div>
+            <div class="ln-name" id="ln-name-1">小芳</div>
+            <div class="ln-msg" id="ln-msg-1">阿嬤發送了緊急求助通知！📍 位置已分享，請盡快確認。</div>
+          </div>
+          <div class="ln-time">現在</div>
+        </div>
+        <div class="line-notif" id="line-notif-2" style="transition-delay:0.25s;">
+          <div class="ln-logo" style="background:#06C755;">💬</div>
+          <div class="ln-body">
+            <div class="ln-app">LINE · 剛剛</div>
+            <div class="ln-name" id="ln-name-2">照護助手 Bot</div>
+            <div class="ln-msg">✅ 通知已送達聯絡人。如需協助請回覆此訊息。</div>
+          </div>
+          <div class="ln-time">現在</div>
+        </div>
+        <button class="ln-dismiss" onclick="dismissLine()">✓ 知道了，關閉通知</button>
+      </div>
+
     </div>
-    <div style="display: flex; gap: 12px;">
-      <button class="btn" id="clearSearch">清除</button>
-      <button class="btn" id="expandAll">展開全部</button>
+
+    <!-- MED -->
+    <div class="page" id="p-med">
+      <div class="hero-block">
+        <div class="hb-row">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <div><div class="hb-title">💊 用藥提醒</div><div class="hb-sub">今天記得按時服藥！</div></div>
+        </div>
+        <div class="hb-badge" id="med-date-badge">📅 今天 載入中…</div>
+      </div>
+      <div class="time-grp">
+        <div class="time-lbl">⏰ 08:00</div>
+        <div class="med-row">
+          <div class="med-ico mi-g">💊</div>
+          <div style="flex:1"><div class="med-n">高血壓藥</div><div class="med-d">1顆｜飯後</div></div>
+          <button class="med-tag mt-ok">✅ 已服用</button>
+        </div>
+      </div>
+      <div class="time-grp">
+        <div class="time-lbl">⏰ 12:00</div>
+        <div class="med-row" onclick="openMedModal()">
+          <div class="med-ico mi-y">💊</div>
+          <div style="flex:1"><div class="med-n">胃藥</div><div class="med-d">2顆｜飯後 30 分鐘</div></div>
+          <button class="med-tag mt-act" onclick="event.stopPropagation();openMedModal()">確認服藥</button>
+        </div>
+      </div>
+      <div class="time-grp">
+        <div class="time-lbl">⏰ 18:00</div>
+        <div class="med-row">
+          <div class="med-ico mi-y">💊</div>
+          <div style="flex:1"><div class="med-n">降血糖藥</div><div class="med-d">1顆｜飯前</div></div>
+          <button class="med-tag mt-pend">⏳ 未到時間</button>
+        </div>
+      </div>
+      <div class="warn-box" id="warn-box" style="display:none">
+        <div class="wb-t">⚠️ 已過 30 分鐘未確認</div>
+        <div class="wb-s">胃藥是否已服藥？</div>
+        <div class="wb-btns">
+          <button class="wb-y" onclick="showToast('✅ 已記錄服藥完成！');document.getElementById('warn-box').style.display='none'">✅ 是，已服藥</button>
+          <button class="wb-n" onclick="showToast('⏰ 已記錄未服藥')">❌ 否</button>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <!-- Med modal -->
+      <div class="modal-bg" id="med-modal" onclick="closeMedModal(event)">
+        <div class="modal-sheet">
+          <div class="m-handle"></div>
+          <div class="m-title">🔔 該吃藥了！</div>
+          <div class="m-sub">12:00 的用藥提醒</div>
+          <div class="m-pill">
+            <span style="font-size:30px;">💊</span>
+            <div><div class="m-pill-n">胃藥</div><div class="m-pill-d">2顆｜飯後 30 分鐘服用</div></div>
+          </div>
+          <div class="m-acts">
+            <button class="ma-p" onclick="closeMedModal();showToast('✅ 胃藥已記錄服用！')">✅ 我已吃藥</button>
+            <button class="ma-s" onclick="closeMedModal();showToast('⏰ 30分鐘後再提醒')">⏳ 稍後</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <nav class="toc" id="toc">
-        <h3>產品導覽</h3>
-        <div id="tocLinks"></div>
-        
-        <div style="margin-top: 24px; padding: 16px; background: rgba(16,185,129,0.1); border: 1px solid var(--neon-green); border-radius: 12px;">
-          <h4 style="color: var(--neon-green); margin: 0 0 8px; font-size: 0.9rem;">即時狀態</h4>
-          <div class="status active">🟢 系統正常</div>
-          <div style="margin-top: 8px; font-size: 0.8rem; color: var(--muted);">威脅特徵庫已更新</div>
+    <!-- REPORT -->
+    <div class="page" id="p-report">
+      <div class="hero-block">
+        <div class="hb-row">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <div><div class="hb-title">📊 健康報表</div><div class="hb-sub">過去 7 天記錄</div></div>
         </div>
-      </nav>
-    </aside>
-
-    <main id="content">
-      <!-- 1 產品概述 -->
-      <section id="intro" data-title="產品概述">
-        <div class="title">
-          <h2>GWall 4.0 企業級網路安全解決方案</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#intro">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
+        <div class="rpt-stats">
+          <div class="rpt-st"><div class="rpt-v">148/92</div><div class="rpt-l">今日血壓</div></div>
+          <div class="rpt-st"><div class="rpt-v">72</div><div class="rpt-l">心跳 bpm</div></div>
+          <div class="rpt-st"><div class="rpt-v">98%</div><div class="rpt-l">血氧</div></div>
         </div>
-        <p class="meta">Angroup GWall 4.0 - 次世代整合式網路安全平台，結合防火牆、VPN、IDS/IPS、應用控制於單一設備，提供企業級零信任架構與威脅防護。</p>
-        
-        <div class="grid cols-4" style="margin-bottom: 24px;">
-          <div class="stat-card">
-            <span class="number">4Gbps</span>
-            <span class="label">防火牆吞吐量</span>
-          </div>
-          <div class="stat-card">
-            <span class="number">600Mbps</span>
-            <span class="label">VPN 效能</span>
-          </div>
-          <div class="stat-card">
-            <span class="number">50K</span>
-            <span class="label">並發連線</span>
-          </div>
-          <div class="stat-card">
-            <span class="number">99.9%</span>
-            <span class="label">可用性保證</span>
-          </div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-t">📈 血壓趨勢（7天）<span>mmHg</span></div>
+        <div class="bar-chart">
+          <div class="y-ax"><span>160</span><span>130</span><span>100</span></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys ok" style="height:50px"></div><div class="bar-dia" style="height:26px"></div></div><div class="bar-d">一</div></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys ok" style="height:44px"></div><div class="bar-dia" style="height:23px"></div></div><div class="bar-d">二</div></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys" style="height:60px"></div><div class="bar-dia" style="height:31px"></div></div><div class="bar-d">三</div></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys" style="height:56px"></div><div class="bar-dia" style="height:29px"></div></div><div class="bar-d">四</div></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys ok" style="height:46px"></div><div class="bar-dia" style="height:24px"></div></div><div class="bar-d">五</div></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys ok" style="height:42px"></div><div class="bar-dia" style="height:21px"></div></div><div class="bar-d">六</div></div>
+          <div class="bar-grp"><div class="bar-pair"><div class="bar-sys" style="height:63px"></div><div class="bar-dia" style="height:33px"></div></div><div class="bar-d" style="color:var(--blue-m);font-weight:800;">今</div></div>
         </div>
-        
-        <details open>
-          <summary>核心優勢</summary>
-          <div class="grid cols-3">
-            <div class="card feature">
-              <div class="icon">🔐</div>
-              <div>
-                <b>多重 VPN 技術</b><br>
-                <small>支援 OpenVPN、WireGuard、IPSec VPN，提供最高 800Mbps 加密傳輸效能</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">🛡️</div>
-              <div>
-                <b>AI 驅動防護</b><br>
-                <small>機器學習引擎結合傳統特徵比對，提供零日威脅檢測與自動化回應</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">⚡</div>
-              <div>
-                <b>極致效能</b><br>
-                <small>防火牆吞吐量達 5Gbps，支援 50,000 併發連線與每秒 5,000 新連線</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">🌐</div>
-              <div>
-                <b>零信任架構</b><br>
-                <small>以身份為核心的存取控制，微分段技術防範橫向移動攻擊</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">📊</div>
-              <div>
-                <b>智慧分析</b><br>
-                <small>即時流量視覺化、威脅情報整合、預測性風險評估</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">🔧</div>
-              <div>
-                <b>統一管理</b><br>
-                <small>Web-based 集中控台，支援 API 自動化與第三方 SIEM 整合</small>
-              </div>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>產業認證與合規</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🏆 國際認證</b><br>
-              <small>Common Criteria EAL4+、FIPS 140-2 Level 2、IPv6 Ready Logo</small>
-            </div>
-            <div class="card">
-              <b>📋 法規遵循</b><br>
-              <small>支援 GDPR、HIPAA、SOX、PCI-DSS 等合規要求</small>
-            </div>
-          </div>
-        </details>
-      </section>
-
-      <!-- 2 解決方案架構 -->
-      <section id="architecture" data-title="解決方案架構">
-        <div class="title">
-          <h2>解決方案架構</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#architecture">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
+        <div class="legend">
+          <span><span class="ld" style="background:var(--red)"></span>偏高</span>
+          <span><span class="ld" style="background:var(--blue-m)"></span>正常</span>
+          <span><span class="ld" style="background:#90CDF4"></span>舒張壓</span>
         </div>
-        <p class="meta">現代化網路安全架構設計，整合邊緣防護、核心控制與雲端威脅情報，實現全方位安全防護。</p>
-        
-        <details open>
-          <summary>架構核心元件</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🌊 流量控制層</b><br>
-              <small><strong>北向/南向：</strong>外網存取控制與威脅阻斷<br>
-              <strong>東西向：</strong>內網微分段與橫向移動防護</small>
-            </div>
-            <div class="card">
-              <b>🧠 威脅情報中心</b><br>
-              <small><strong>即時同步：</strong>全球威脅情報與 IOC 指標<br>
-              <strong>機器學習：</strong>行為基線學習與異常檢測</small>
-            </div>
-            <div class="card">
-              <b>🎯 政策引擎</b><br>
-              <small><strong>集中管理：</strong>統一政策配發與版本控制<br>
-              <strong>動態調整：</strong>基於風險等級的自動政策更新</small>
-            </div>
-            <div class="card">
-              <b>⚡ 高可用性設計</b><br>
-              <small><strong>Active-Active：</strong>雙機負載平衡與故障切換<br>
-              <strong>狀態同步：</strong>連線表與政策即時同步</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>部署拓撲範例</summary>
-          <div class="alert info">
-            <strong>💡 建議架構：</strong>採用 DMZ 三層架構設計，外網區 → DMZ 區 → 內網區，每層間部署 GWall 4.0 進行流量檢查與控制。
-          </div>
-          <ul>
-            <li><strong>邊界部署：</strong>作為主要防火牆，處理所有外網流量</li>
-            <li><strong>核心交換：</strong>內網分段控制，東西向流量監控</li>
-            <li><strong>雲端整合：</strong>混合雲環境的統一安全政策</li>
-            <li><strong>分支連接：</strong>SD-WAN 與傳統 MPLS 的安全閘道</li>
-          </ul>
-        </details>
-      </section>
+      </div>
+      <div class="status-alert">
+        <span style="font-size:24px;">⚠️</span>
+        <div><div class="sa-t">今日血壓偏高（148/92）</div><div class="sa-s">建議與醫師討論調整用藥</div></div>
+      </div>
+      <div class="rpt-acts">
+        <button class="rpt-btn" onclick="showToast('📄 PDF 匯出中…')">📄 匯出 PDF</button>
+        <button class="rpt-btn" onclick="showToast('💬 分享至 LINE')">💬 分享 LINE</button>
+      </div>
+    </div>
 
-      <!-- 3 核心功能 -->
-      <section id="features" data-title="核心功能">
-        <div class="title">
-          <h2>核心功能模組</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#features">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
+    <!-- STRESS -->
+    <div class="page" id="p-stress">
+      <div class="hero-block">
+        <div class="hb-row">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <div><div class="hb-title">🧠 壓力燈號</div><div class="hb-sub">今天感覺如何？</div></div>
         </div>
-        
-        <div class="tabs" data-tabs>
-          <button class="tab active" data-tab="f1">防火牆 & NAT</button>
-          <button class="tab" data-tab="f2">VPN 解決方案</button>
-          <button class="tab" data-tab="f3">IDS/IPS 防護</button>
-          <button class="tab" data-tab="f4">應用控制</button>
-          <button class="tab" data-tab="f5">監控告警</button>
-          <button class="tab" data-tab="f6">零信任</button>
+      </div>
+      <div class="sec-t" style="padding-top:14px;">今天壓力幾分？</div>
+      <div class="emo-row">
+        <button class="emo-btn" data-emoji="😄" data-level="green" onclick="pickStress(this)"><span class="ef">😄</span><span class="el">很好</span></button>
+        <button class="emo-btn" data-emoji="😐" data-level="yellow" onclick="pickStress(this)"><span class="ef">😐</span><span class="el">還好</span></button>
+        <button class="emo-btn" data-emoji="😣" data-level="yellow" onclick="pickStress(this)"><span class="ef">😣</span><span class="el">有壓力</span></button>
+        <button class="emo-btn" data-emoji="😫" data-level="red" onclick="pickStress(this)"><span class="ef">😫</span><span class="el">很累</span></button>
+        <button class="emo-btn" data-emoji="😵" data-level="red" onclick="pickStress(this)"><span class="ef">😵</span><span class="el">崩潰</span></button>
+      </div>
+      <button class="sub-btn" onclick="submitStress()">提交今日狀態</button>
+      <div class="trend-card">
+        <div class="tc-t">📊 本週趨勢</div>
+        <div class="td-row">
+          <div class="td-g2"><div class="td-b td-bg">😄</div><div class="td-l">一</div></div>
+          <div class="td-g2"><div class="td-b td-by">😐</div><div class="td-l">二</div></div>
+          <div class="td-g2"><div class="td-b td-br">😫</div><div class="td-l">三</div></div>
+          <div class="td-g2"><div class="td-b td-br">😵</div><div class="td-l">四</div></div>
+          <div class="td-g2"><div class="td-b td-by">😣</div><div class="td-l">五</div></div>
+          <div class="td-g2"><div class="td-b td-bg">😄</div><div class="td-l">六</div></div>
+          <div class="td-g2" id="today-trend-col"><div class="td-b" id="today-trend-dot" style="background:var(--g100);font-size:10px;color:var(--g400)">？</div><div class="td-l">今</div></div>
         </div>
-        
-        <div class="tab-panel active" id="f1">
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🔥 狀態防火牆</b><br>
-              <small>基於連線狀態的深度包檢測，支援 TCP/UDP 狀態追蹤與應用層檢查</small>
-              <div class="progress-bar"><div class="progress-fill" style="width: 95%"></div></div>
-            </div>
-            <div class="card">
-              <b>🔄 進階 NAT</b><br>
-              <small>支援 SNAT/DNAT/Port Forwarding，多 WAN 負載平衡與故障切換</small>
-              <div class="progress-bar"><div class="progress-fill" style="width: 88%"></div></div>
-            </div>
-            <div class="card">
-              <b>🏷️ Zone 管理</b><br>
-              <small>邏輯區域劃分，支援 VLAN、物理介面與虛擬介面混合配置</small>
-              <div class="progress-bar"><div class="progress-fill" style="width: 92%"></div></div>
-            </div>
-            <div class="card">
-              <b>📐 政策物件</b><br>
-              <small>地址群組、服務群組、時間排程，可重複使用的政策元件</small>
-              <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
-            </div>
-          </div>
+      </div>
+      <div class="alert-strip" id="stress-alert-strip">
+        <span style="font-size:20px;">⚠️</span>
+        <div><div class="as-t">最近壓力偏高</div><div class="as-s">👉 建議休息或尋求協助</div></div>
+      </div>
+    </div>
+
+    <!-- RESPITE -->
+    <div class="page" id="p-respite">
+      <div class="hero-block">
+        <div class="hb-row">
+          <button class="back-btn" onclick="goBack()">←</button>
+          <div><div class="hb-title">📅 喘息計畫</div><div class="hb-sub" id="respite-sub">本週照護安排</div></div>
         </div>
-        
-        <div class="tab-panel" id="f2">
-          <div class="alert success">
-            <strong>🚀 業界領先 VPN 效能：</strong>採用硬體加速引擎，AES-256 加密下仍可達到 800Mbps 吞吐量。
-          </div>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🏢 Site-to-Site VPN</b><br>
-              <small><strong>IPSec：</strong>IKEv1/v2、ESP/AH、PFS 支援<br>
-              <strong>相容性：</strong>Cisco、Fortinet、Palo Alto 等主流設備</small>
-            </div>
-            <div class="card">
-              <b>👥 Remote Access VPN</b><br>
-              <small><strong>SSL VPN：</strong>無客戶端 Web 存取<br>
-              <strong>OpenVPN：</strong>跨平台客戶端支援</small>
-            </div>
-            <div class="card">
-              <b>🆕 WireGuard 支援</b><br>
-              <small><strong>新世代協定：</strong>更快速、更安全的 VPN 體驗<br>
-              <strong>行動優化：</strong>適合行動裝置與不穩定網路</small>
-            </div>
-            <div class="card">
-              <b>🔐 進階認證</b><br>
-              <small><strong>雙因子驗證：</strong>OTP、硬體金鑰、行動 App<br>
-              <strong>AD 整合：</strong>LDAP/RADIUS 單一登入</small>
-            </div>
-          </div>
+      </div>
+      <!-- Week strip: rendered by JS -->
+      <div class="week-scroll" id="week-strip"></div>
+      <!-- Day label + plan list -->
+      <div class="plan-sec">
+        <div class="plan-t" id="plan-day-title">📌 本週計畫</div>
+        <div id="plan-list"></div>
+        <div id="plan-empty" style="display:none;text-align:center;padding:28px 0;color:var(--g400);font-size:13px;font-weight:600;">
+          這天目前沒有安排<br>
+          <span style="font-size:26px;display:block;margin-top:8px;">🌿</span>
         </div>
-        
-        <div class="tab-panel" id="f3">
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🎯 威脅檢測引擎</b><br>
-              <small><strong>特徵比對：</strong>40,000+ 威脅特徵，每日更新<br>
-              <strong>異常偵測：</strong>基於 ML 的行為分析與零日威脅檢測</small>
-            </div>
-            <div class="card">
-              <b>⚡ 即時防禦</b><br>
-              <small><strong>自動阻斷：</strong>惡意 IP/域名即時封鎖<br>
-              <strong>速率限制：</strong>DDoS 攻擊緩解與頻寬控制</small>
-            </div>
-            <div class="card">
-              <b>🔬 深度檢測</b><br>
-              <small><strong>協定分析：</strong>HTTP/HTTPS、FTP、SMTP 等應用層檢查<br>
-              <strong>惡意軟體：</strong>檔案沙箱分析與病毒掃描</small>
-            </div>
-            <div class="card">
-              <b>🚨 事件回應</b><br>
-              <small><strong>自動化：</strong>SOAR 整合，事件自動分類與處理<br>
-              <strong>取證支援：</strong>完整攻擊鏈重建與證據保全</small>
-            </div>
-          </div>
+      </div>
+      <button class="add-btn" onclick="openAddPlan()">＋ 新增計畫</button>
+      <div class="remind-banner" id="remind-banner">
+        <span class="rb-ico">⏰</span>
+        <div><div class="rb-t">明日提醒</div><div class="rb-s" id="remind-text">送往日照中心（週一 09:00）</div></div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- Add Plan Modal -->
+  <div class="modal-bg" id="add-plan-modal" onclick="closeAddPlan(event)">
+    <div class="modal-sheet">
+      <div class="m-handle"></div>
+      <div class="m-title">➕ 新增喘息計畫</div>
+      <div class="m-sub">填寫計畫內容</div>
+      <div class="form-field">
+        <div class="ff-label">活動名稱</div>
+        <input class="ff-input" id="plan-name" type="text" placeholder="例：日照中心、女兒照顧…">
+      </div>
+      <div class="form-field">
+        <div class="ff-label">選擇星期</div>
+        <div class="day-picker" id="day-picker">
+          <button class="day-opt" data-day="0" onclick="pickDay(this)">一</button>
+          <button class="day-opt" data-day="1" onclick="pickDay(this)">二</button>
+          <button class="day-opt" data-day="2" onclick="pickDay(this)">三</button>
+          <button class="day-opt" data-day="3" onclick="pickDay(this)">四</button>
+          <button class="day-opt" data-day="4" onclick="pickDay(this)">五</button>
+          <button class="day-opt" data-day="5" onclick="pickDay(this)">六</button>
+          <button class="day-opt" data-day="6" onclick="pickDay(this)">日</button>
         </div>
-        
-        <div class="tab-panel" id="f4">
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🕵️ Layer 7 應用辨識</b><br>
-              <small><strong>深度檢測：</strong>超過 3,000 種應用程式辨識<br>
-              <strong>自訂分類：</strong>企業專屬應用與雲端服務控制</small>
-            </div>
-            <div class="card">
-              <b>🌐 URL 過濾</b><br>
-              <small><strong>即時分類：</strong>80+ 類別，惡意網站即時攔截<br>
-              <strong>自訂清單：</strong>黑白名單與例外規則設定</small>
-            </div>
-            <div class="card">
-              <b>⏰ 時間政策</b><br>
-              <small><strong>工作時段：</strong>基於時間的存取控制<br>
-              <strong>頻寬配置：</strong>動態 QoS 與流量優先權</small>
-            </div>
-            <div class="card">
-              <b>☁️ 雲端應用控制</b><br>
-              <small><strong>SaaS 管控：</strong>Office 365、Google Workspace 精細控制<br>
-              <strong>影子 IT：</strong>未授權雲端服務檢測與阻斷</small>
-            </div>
-          </div>
-        </div>
-        
-        <div class="tab-panel" id="f5">
-          <div class="grid cols-2">
-            <div class="card">
-              <b>📊 即時監控儀表板</b><br>
-              <small><strong>視覺化：</strong>流量圖表、威脅地圖、連線狀態<br>
-              <strong>效能監控：</strong>CPU、記憶體、網路介面使用率</small>
-            </div>
-            <div class="card">
-              <b>📧 智慧告警系統</b><br>
-              <small><strong>多通道：</strong>Email、SMS、Webhook、SNMP Trap<br>
-              <strong>智慧過濾：</strong>告警聚合與重複抑制</small>
-            </div>
-            <div class="card">
-              <b>📋 合規報表</b><br>
-              <small><strong>自動生成：</strong>法規遵循、稽核、管理報表<br>
-              <strong>客製化：</strong>排程報表與 CSV/PDF 匯出</small>
-            </div>
-            <div class="card">
-              <b>🔍 日誌分析</b><br>
-              <small><strong>集中收集：</strong>Syslog、CEF、LEEF 格式支援<br>
-              <strong>長期保存：</strong>法規要求的日誌保留與檢索</small>
-            </div>
-          </div>
-        </div>
-        
-        <div class="tab-panel" id="f6">
-          <div class="alert info">
-            <strong>🎯 零信任核心原則：</strong>永不信任，持續驗證 - 每個存取請求都需通過身份驗證、裝置檢查與風險評估。
-          </div>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🆔 身份驗證</b><br>
-              <small><strong>多因子認證：</strong>密碼 + OTP + 生物特徵<br>
-              <strong>單一登入：</strong>SAML、OAuth 2.0、OpenID Connect</small>
-            </div>
-            <div class="card">
-              <b>📱 裝置信任</b><br>
-              <small><strong>端點檢查：</strong>防毒狀態、修補程式、合規性<br>
-              <strong>憑證管理：</strong>PKI 整合與裝置憑證驗證</small>
-            </div>
-            <div class="card">
-              <b>🎲 風險評估</b><br>
-              <small><strong>動態評分：</strong>使用者、裝置、位置風險計算<br>
-              <strong>適應性存取：</strong>基於風險的存取權限調整</small>
-            </div>
-            <div class="card">
-              <b>🔍 持續監控</b><br>
-              <small><strong>行為分析：</strong>異常行為即時檢測<br>
-              <strong>會話管理：</strong>動態會話驗證與終止</small>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4 進階安全功能 -->
-      <section id="advanced" data-title="進階安全">
-        <div class="title">
-          <h2>進階安全功能</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#advanced">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <details open>
-          <summary>AI 威脅防護</summary>
-          <div class="grid cols-3">
-            <div class="card">
-              <b>🤖 機器學習引擎</b><br>
-              <small>深度學習模型分析網路流量模式，檢測未知威脅與進階持續威脅（APT）</small>
-            </div>
-            <div class="card">
-              <b>🔮 預測性分析</b><br>
-              <small>基於歷史攻擊模式預測潛在威脅，提前部署防護策略</small>
-            </div>
-            <div class="card">
-              <b>🎯 精準阻斷</b><br>
-              <small>智慧判斷減少誤報，確保業務連續性同時維持高安全性</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>企業整合能力</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🔌 SIEM/SOAR 整合</b><br>
-              <small><strong>支援平台：</strong>Splunk、IBM QRadar、Microsoft Sentinel<br>
-              <strong>API 介接：</strong>RESTful API 與 Webhook 事件推送</small>
-            </div>
-            <div class="card">
-              <b>🛡️ EDR/XDR 聯防</b><br>
-              <small><strong>端點協作：</strong>與 CrowdStrike、SentinelOne 等 EDR 整合<br>
-              <strong>威脅獵捕：</strong>網路與端點的關聯分析</small>
-            </div>
-            <div class="card">
-              <b>☁️ 雲端安全</b><br>
-              <small><strong>CASB 功能：</strong>雲端應用存取控制與資料外洩防護<br>
-              <strong>混合雲：</strong>統一管理地端與雲端安全政策</small>
-            </div>
-            <div class="card">
-              <b>🔗 IT 生態整合</b><br>
-              <small><strong>身份管理：</strong>Active Directory、LDAP、Azure AD<br>
-              <strong>票務系統：</strong>ServiceNow、Jira 事件自動建立</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>法規遵循與稽核</summary>
-          <div class="alert warning">
-            <strong>⚖️ 法規要求：</strong>符合個資法、資通安全管理法等台灣法規，以及國際 GDPR、HIPAA、SOX 等合規標準。
-          </div>
-          <ul>
-            <li><strong>稽核軌跡：</strong>完整的管理員操作記錄與政策變更歷程</li>
-            <li><strong>資料保護：</strong>敏感資料識別、DLP 功能與加密傳輸</li>
-            <li><strong>存取控制：</strong>最小權限原則與職責分離設計</li>
-            <li><strong>定期檢核：</strong>自動合規性檢查與報告生成</li>
-          </ul>
-        </details>
-      </section>
-
-      <!-- 5 部署情境 -->
-      <section id="scenarios" data-title="部署情境">
-        <div class="title">
-          <h2>部署情境與最佳實務</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#scenarios">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <div class="tabs" data-tabs>
-          <button class="tab active" data-tab="s1">中小企業</button>
-          <button class="tab" data-tab="s2">大型企業</button>
-          <button class="tab" data-tab="s3">金融業</button>
-          <button class="tab" data-tab="s4">製造業</button>
-          <button class="tab" data-tab="s5">教育業</button>
-        </div>
-        
-        <div class="tab-panel active" id="s1">
-          <div class="card feature">
-            <div class="icon">🏢</div>
-            <div>
-              <b>單點部署方案</b><br>
-              <small><strong>適用規模：</strong>50-200 人企業，單一據點或總部<br>
-              <strong>主要功能：</strong>邊界防護、員工上網管理、基本 VPN 存取<br>
-              <strong>建議配置：</strong>GWall-2000 系列，雙 WAN 備援</small>
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>💰 投資回報</b><br>
-              <small>整合多功能設備，減少 60% 硬體成本與維護費用</small>
-            </div>
-            <div class="card">
-              <b>⚡ 快速部署</b><br>
-              <small>預設政策模板，24 小時內完成基本配置</small>
-            </div>
-          </div>
-        </div>
-        
-        <div class="tab-panel" id="s2">
-          <div class="card feature">
-            <div class="icon">🏭</div>
-            <div>
-              <b>企業級高可用性方案</b><br>
-              <small><strong>適用規模：</strong>500+ 人企業，多據點分布<br>
-              <strong>架構特色：</strong>Active-Active HA、集中管理、分層防護<br>
-              <strong>建議配置：</strong>GWall-5000 系列 HA 叢集</small>
-            </div>
-          </div>
-          <div class="grid cols-3">
-            <div class="card">
-              <b>🔄 高可用性</b><br>
-              <small>99.99% 運行時間保證，故障切換 < 3 秒</small>
-            </div>
-            <div class="card">
-              <b>📈 可擴展性</b><br>
-              <small>模組化架構，支援水平與垂直擴展</small>
-            </div>
-            <div class="card">
-              <b>🎛️ 集中管理</b><br>
-              <small>統一控制台管理所有據點設備</small>
-            </div>
-          </div>
-        </div>
-        
-        <div class="tab-panel" id="s3">
-          <div class="card feature">
-            <div class="icon">🏦</div>
-            <div>
-              <b>金融業專用解決方案</b><br>
-              <small><strong>法規遵循：</strong>符合金管會資安規範、個資法要求<br>
-              <strong>高安全性：</strong>多層防護、加密傳輸、存取控制<br>
-              <strong>稽核需求：</strong>完整日誌記錄與合規報表</small>
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🔒 資料保護</b><br>
-              <small>端到端加密、DLP 防護、敏感資料遮罩</small>
-            </div>
-            <div class="card">
-              <b>📋 法規合規</b><br>
-              <small>自動化合規檢查、稽核報表、政策基線</small>
-            </div>
-          </div>
-        </div>
-        
-        <div class="tab-panel" id="s4">
-          <div class="card feature">
-            <div class="icon">⚙️</div>
-            <div>
-              <b>智慧製造安全方案</b><br>
-              <small><strong>OT/IT 整合：</strong>工業控制系統與企業網路安全隔離<br>
-              <strong>零停機：</strong>不影響生產線的安全更新與維護<br>
-              <strong>物聯網防護：</strong>工業物聯網設備存取控制</small>
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🏭 生產網路隔離</b><br>
-              <small>OT/IT 網路分段，保護關鍵生產系統</small>
-            </div>
-            <div class="card">
-              <b>📡 IoT 設備管理</b><br>
-              <small>工業物聯網設備識別與存取控制</small>
-            </div>
-          </div>
-        </div>
-        
-        <div class="tab-panel" id="s5">
-          <div class="card feature">
-            <div class="icon">🎓</div>
-            <div>
-              <b>校園網路安全方案</b><br>
-              <small><strong>多用戶管理：</strong>學生、教職員、訪客分層存取控制<br>
-              <strong>內容過濾：</strong>不當內容攔截與學習資源保護<br>
-              <strong>頻寬管理：</strong>公平使用與學術優先的流量分配</small>
-            </div>
-          </div>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>👥 多角色管理</b><br>
-              <small>學生、教師、行政、訪客不同權限控制</small>
-            </div>
-            <div class="card">
-              <b>📚 學習環境保護</b><br>
-              <small>不當內容過濾、網路霸凌防護</small>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6 硬體規格 -->
-      <section id="specs" data-title="硬體規格">
-        <div class="title">
-          <h2>產品規格與效能</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#specs">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        <p class="meta">高效能硬體平台，採用多核心處理器與硬體加速技術，提供企業級可靠性與擴展性。</p>
-        
-        <details open>
-          <summary>GWall-2000 系列（中小企業）</summary>
-          <table class="spec-table">
-            <thead>
-              <tr>
-                <th>規格項目</th>
-                <th>GWall-2500</th>
-                <th>GWall-2800</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td><b>防火牆吞吐量</b></td><td>2.5 Gbps</td><td>5 Gbps</td></tr>
-              <tr><td><b>VPN 吞吐量</b></td><td>400 Mbps</td><td>800 Mbps</td></tr>
-              <tr><td><b>最大併發連線</b></td><td>25,000</td><td>50,000</td></tr>
-              <tr><td><b>新連線/秒</b></td><td>2,500</td><td>5,000</td></tr>
-              <tr><td><b>網路介面</b></td><td>6× GbE + 2× SFP+</td><td>8× GbE + 4× SFP+</td></tr>
-              <tr><td><b>處理器</b></td><td>4 核心 2.0GHz</td><td>8 核心 2.4GHz</td></tr>
-              <tr><td><b>記憶體</b></td><td>8GB DDR4</td><td>16GB DDR4</td></tr>
-              <tr><td><b>儲存空間</b></td><td>256GB SSD</td><td>512GB SSD</td></tr>
-              <tr><td><b>電源供應</b></td><td>150W (含備援)</td><td>250W (含備援)</td></tr>
-              <tr><td><b>作業溫度</b></td><td colspan="2">0°C ~ 40°C</td></tr>
-              <tr><td><b>尺寸 (W×D×H)</b></td><td colspan="2">440 × 350 × 44 mm (1U)</td></tr>
-            </tbody>
-          </table>
-        </details>
-        
-        <details>
-          <summary>GWall-5000 系列（企業級）</summary>
-          <table class="spec-table">
-            <thead>
-              <tr>
-                <th>規格項目</th>
-                <th>GWall-5200</th>
-                <th>GWall-5500</th>
-                <th>GWall-5800</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td><b>防火牆吞吐量</b></td><td>10 Gbps</td><td>20 Gbps</td><td>40 Gbps</td></tr>
-              <tr><td><b>VPN 吞吐量</b></td><td>2 Gbps</td><td>5 Gbps</td><td>10 Gbps</td></tr>
-              <tr><td><b>最大併發連線</b></td><td>500,000</td><td>2,000,000</td><td>10,000,000</td></tr>
-              <tr><td><b>新連線/秒</b></td><td>50,000</td><td>200,000</td><td>500,000</td></tr>
-              <tr><td><b>網路介面</b></td><td>12× GbE + 8× SFP+</td><td>16× GbE + 8× SFP+</td><td>24× GbE + 16× SFP+</td></tr>
-              <tr><td><b>處理器</b></td><td>12 核心 3.0GHz</td><td>16 核心 3.2GHz</td><td>24 核心 3.5GHz</td></tr>
-              <tr><td><b>記憶體</b></td><td>32GB DDR4</td><td>64GB DDR4</td><td>128GB DDR4</td></tr>
-              <tr><td><b>儲存空間</b></td><td>1TB SSD</td><td>2TB SSD</td><td>4TB SSD</td></tr>
-              <tr><td><b>電源供應</b></td><td>400W (雙備援)</td><td>600W (雙備援)</td><td>800W (雙備援)</td></tr>
-              <tr><td><b>作業溫度</b></td><td colspan="3">0°C ~ 40°C (工業級 -10°C ~ 60°C 可選)</td></tr>
-              <tr><td><b>尺寸 (W×D×H)</b></td><td>440 × 450 × 88 mm (2U)</td><td colspan="2">440 × 650 × 132 mm (3U)</td></tr>
-            </tbody>
-          </table>
-        </details>
-        
-        <details>
-          <summary>效能基準測試</summary>
-          <div class="grid cols-3">
-            <div class="card">
-              <b>🔥 防火牆測試</b><br>
-              <small><strong>測試條件：</strong>64 byte 封包，雙向流量<br>
-              <strong>效能保證：</strong>規格值的 95% 以上穩定輸出</small>
-            </div>
-            <div class="card">
-              <b>🔐 VPN 加密測試</b><br>
-              <small><strong>加密標準：</strong>AES-256-GCM<br>
-              <strong>硬體加速：</strong>專用加密處理器，CPU 占用 < 30%</small>
-            </div>
-            <div class="card">
-              <b>🎯 IPS 檢測測試</b></td>
-              <small><strong>威脅檢測：</strong>啟用全部特徵庫<br>
-              <strong>延遲影響：</strong>< 100μs 額外延遲</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>環境規格與認證</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🌡️ 環境適應性</b><br>
-              <small><strong>溫度範圍：</strong>0°C ~ 40°C (標準) / -10°C ~ 60°C (工業級)<br>
-              <strong>濕度範圍：</strong>5% ~ 95% (無凝結)<br>
-              <strong>海拔高度：</strong>3,000 公尺以下正常運行</small>
-            </div>
-            <div class="card">
-              <b>🏆 安全認證</b><br>
-              <small><strong>國際標準：</strong>Common Criteria EAL4+、FIPS 140-2<br>
-              <strong>電氣安全：</strong>UL、CE、FCC Class A<br>
-              <strong>環保標準：</strong>RoHS、WEEE 符合</small>
-            </div>
-          </div>
-        </details>
-      </section>
-
-      <!-- 7 授權與維護 -->
-      <section id="licensing" data-title="授權與維護">
-        <div class="title">
-          <h2>授權方案與技術支援</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#licensing">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <details open>
-          <summary>授權方案比較</summary>
-          <table class="spec-table">
-            <thead>
-              <tr>
-                <th>功能模組</th>
-                <th>基礎版</th>
-                <th>專業版</th>
-                <th>企業版</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td><b>防火牆 & NAT</b></td><td class="status active">✓ 包含</td><td class="status active">✓ 包含</td><td class="status active">✓ 包含</td></tr>
-              <tr><td><b>VPN (IPSec/SSL)</b></td><td>5 條通道</td><td>50 條通道</td><td>無限制</td></tr>
-              <tr><td><b>IDS/IPS 防護</b></td><td class="status warning">基礎特徵</td><td class="status active">✓ 完整</td><td class="status active">✓ 完整</td></tr>
-              <tr><td><b>應用控制</b></td><td class="status warning">500 種應用</td><td class="status active">✓ 完整</td><td class="status active">✓ 完整</td></tr>
-              <tr><td><b>URL 過濾</b></td><td>-</td><td class="status active">✓ 包含</td><td class="status active">✓ 包含</td></tr>
-              <tr><td><b>反病毒掃描</b></td><td>-</td><td class="status active">✓ 包含</td><td class="status active">✓ 包含</td></tr>
-              <tr><td><b>零信任功能</b></td><td>-</td><td>-</td><td class="status active">✓ 包含</td></tr>
-              <tr><td><b>高可用性 (HA)</b></td><td>-</td><td class="status active">✓ 包含</td><td class="status active">✓ 包含</td></tr>
-              <tr><td><b>集中管理</b></td><td>-</td><td>5 台設備</td><td>無限制</td></tr>
-              <tr><td><b>技術支援</b></td><td>工作時間</td><td>24×5</td><td>24×7</td></tr>
-            </tbody>
-          </table>
-        </details>
-        
-        <details>
-          <summary>維護服務等級協定 (SLA)</summary>
-          <div class="grid cols-3">
-            <div class="card">
-              <b>🎯 基礎支援</b><br>
-              <small><strong>回應時間：</strong>4 小時 (工作時間)<br>
-              <strong>解決時間：</strong>2 個工作天<br>
-              <strong>支援方式：</strong>Email、線上工單</small>
-            </div>
-            <div class="card">
-              <b>⚡ 專業支援</b><br>
-              <small><strong>回應時間：</strong>2 小時 (24×5)<br>
-              <strong>解決時間：</strong>4 小時 (重大問題)<br>
-              <strong>支援方式：</strong>電話、遠端協助</small>
-            </div>
-            <div class="card">
-              <b>🚀 企業支援</b><br>
-              <small><strong>回應時間：</strong>1 小時 (24×7)<br>
-              <strong>解決時間：</strong>2 小時 (緊急問題)<br>
-              <strong>支援方式：</strong>專屬技術顧問</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>更新與升級服務</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🔄 自動更新機制</b><br>
-              <small><strong>威脅特徵：</strong>每日自動更新，緊急威脅即時推送<br>
-              <strong>韌體更新：</strong>季度定期更新，安全修補即時發布<br>
-              <strong>應用特徵：</strong>月度更新，新興應用快速支援</small>
-            </div>
-            <div class="card">
-              <b>📈 版本升級政策</b><br>
-              <small><strong>小版本：</strong>免費升級，向下相容<br>
-              <strong>大版本：</strong>優惠升級價格，功能增強<br>
-              <strong>硬體升級：</strong>以舊換新優惠方案</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>專業服務項目</summary>
-          <ul>
-            <li><strong>🏗️ 部署規劃服務：</strong>網路架構評估、安全政策設計、實施計畫制定</li>
-            <li><strong>⚙️ 安裝配置服務：</strong>現場安裝、基礎配置、功能測試驗收</li>
-            <li><strong>🎓 教育訓練服務：</strong>管理員培訓、操作手冊、認證考試</li>
-            <li><strong>🔍 健康檢查服務：</strong>定期系統檢查、效能優化建議、安全評估報告</li>
-            <li><strong>🚨 事件回應服務：</strong>7×24 緊急支援、資安事件協處、鑑識分析服務</li>
-          </ul>
-        </details>
-      </section>
-
-      <!-- 8 成功案例 -->
-      <section id="cases" data-title="成功案例">
-        <div class="title">
-          <h2>客戶成功案例</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#cases">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <details open>
-          <summary>產業應用實例</summary>
-          <div class="grid cols-3">
-            <div class="card feature">
-              <div class="icon">🏭</div>
-              <div>
-                <b>某大型製造集團</b><br>
-                <small><strong>挑戰：</strong>全球 50+ 工廠網路安全統一管理<br>
-                <strong>解決：</strong>部署 GWall 5000 系列 HA 叢集<br>
-                <strong>效益：</strong>資安事件減少 85%，管理效率提升 300%</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">🏦</div>
-              <div>
-                <b>區域性銀行</b><br>
-                <small><strong>挑戰：</strong>金融法規遵循與零信任架構建置<br>
-                <strong>解決：</strong>企業版授權 + 零信任功能模組<br>
-                <strong>效益：</strong>100% 法規合規，內部威脅檢測率 95%</small>
-              </div>
-            </div>
-            <div class="card feature">
-              <div class="icon">🎓</div>
-              <div>
-                <b>國立大學</b><br>
-                <small><strong>挑戰：</strong>校園網路 15,000 用戶存取管理<br>
-                <strong>解決：</strong>多台 GWall 2800 叢集部署<br>
-                <strong>效益：</strong>網路安全事件降低 70%，頻寬使用最佳化</small>
-              </div>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>量化效益分析</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>💰 總擁有成本 (TCO) 降低</b><br>
-              <small><strong>硬體整合：</strong>單一設備取代多套設備，減少 60% 硬體成本<br>
-              <strong>管理效率：</strong>統一介面管理，IT 人力成本節省 40%<br>
-              <strong>維護簡化：</strong>單一廠商支援，維護成本降低 50%</small>
-            </div>
-            <div class="card">
-              <b>📊 安全效益提升</b><br>
-              <small><strong>威脅阻斷：</strong>惡意攻擊阻斷率達 99.9%<br>
-              <strong>誤報率：</strong>AI 輔助判斷，誤報率 < 0.1%<br>
-              <strong>回應時間：</strong>安全事件平均回應時間 < 5 分鐘</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>客戶推薦</summary>
-          <div class="alert success">
-            <strong>💬 台灣某科技製造業 CTO：</strong><br>
-            "GWall 4.0 不僅提供了強大的安全防護能力，更重要的是整合了我們所需的各種功能。AI 威脅檢測準確率很高，大幅減少了我們 SOC 團隊的工作負擔，真正做到了智慧化安全管理。"
-          </div>
-          <div class="alert info">
-            <strong>💬 某金融機構資安長：</strong><br>
-            "在法規遵循方面，GWall 4.0 提供的自動化合規檢查和報告功能，讓我們順利通過了金管會的資安檢查。零信任架構的建置也為我們的數位轉型提供了堅實的安全基礎。"
-          </div>
-        </details>
-<head>
-  <meta charset="utf-8" />
-  <title>雙向VPN連線動態地圖</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-  <style>
-    body { 
-      margin: 0; 
-      background: #000; 
-      color: #fff;
-      font-family: 'Arial', sans-serif;
-    }
-    #map { 
-      width: 100%; 
-      height: 600px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-    }
-    h2 {
-      text-align: center;
-      margin: 20px 0;
-      color: #00ffff;
-      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
-      font-size: 24px;
-    }
-    .pulse {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .loading {
-      text-align: center;
-      padding: 50px;
-      color: #00ffff;
-    }
-    .dark-tiles {
-      filter: invert(1) hue-rotate(180deg) brightness(0.3) contrast(1.2);
-    }
-    .leaflet-container {
-      background-color: #1a1a1a !important;
-    }
-    .status-panel {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #00ffff;
-      font-size: 12px;
-      color: #00ffff;
-      z-index: 1000;
-    }
-    .zoom-info {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #00ffff;
-      font-size: 12px;
-      color: #00ffff;
-      z-index: 1000;
-    }
-  </style>
-</head>
-<body>
-  <h2>實例:  佳集貿易與中國VPN連線狀況</h2>
-  <div id="map">
-    <div class="loading">正在加載地圖...</div>
-  </div>
-  <div class="status-panel">
-    <div>連線狀態：<span id="connection-status">待命中</span></div>
-    <div>活躍連線：<span id="active-connections">0</span></div>
-  </div>
-  <div class="zoom-info">
-    <div>模式：<span id="zoom-mode">總覽</span></div>
-    <div>點擊城市放大 | 點擊空白區域回到總覽</div>
-  </div>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script>
-    let mapInstance = null;
-    let activeConnections = 0;
-    let isZoomedIn = false;
-    let currentZoomedCity = null;
-    let originalView = { center: [27.5, 115], zoom: 5 };
-    let cityMarkers = [];
-    let taipeiMarker = null;
-    
-    function updateStatus(status) {
-      document.getElementById('connection-status').textContent = status;
-      document.getElementById('active-connections').textContent = activeConnections;
-    }
-    
-    function updateZoomMode(mode) {
-      document.getElementById('zoom-mode').textContent = mode;
-    }
-    
-    function initializeMap() {
-      try {
-        if (mapInstance) {
-          return;
-        }
-        
-        const mapContainer = document.getElementById('map');
-        mapContainer.innerHTML = '';
-        
-        if (!mapContainer._leaflet_id) {
-          mapInstance = L.map('map').setView(originalView.center, originalView.zoom);
-        } else {
-          mapContainer.innerHTML = '';
-          mapInstance = L.map('map').setView(originalView.center, originalView.zoom);
-        }
-        
-        const tileLayerOptions = {
-          attribution: '&copy; OpenStreetMap contributors',
-          maxZoom: 18,
-          minZoom: 2
-        };
-
-        const darkTileSources = [
-          'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-          'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-          'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
-        ];
-
-        const primaryTileLayer = L.tileLayer(darkTileSources[0], tileLayerOptions);
-        
-        primaryTileLayer.on('tileerror', function() {
-          mapInstance.removeLayer(primaryTileLayer);
-          const backupTileLayer = L.tileLayer(darkTileSources[1], tileLayerOptions);
-          backupTileLayer.on('tileerror', function() {
-            mapInstance.removeLayer(backupTileLayer);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              ...tileLayerOptions,
-              className: 'dark-tiles'
-            }).addTo(mapInstance);
-          });
-          backupTileLayer.addTo(mapInstance);
-        });
-        
-        primaryTileLayer.addTo(mapInstance);
-
-        // Define Taipei coordinates and bounds once
-        const taipei = [25.033, 121.565];
-        const taipeiBounds = [
-          [24.8, 121.3], [24.8, 121.8], [25.3, 121.8], [25.3, 121.3], [24.8, 121.3]
-        ];
-
-        const cities = [
-          { 
-            name: '上海', 
-            coords: [31.2304, 121.4737],
-            bounds: [
-              [31.0, 121.2], [31.0, 121.8], [31.5, 121.8], [31.5, 121.2], [31.0, 121.2]
-            ]
-          },
-          { 
-            name: '台山', 
-            coords: [22.25, 112.7833],
-            bounds: [
-              [22.0, 112.5], [22.0, 113.1], [22.5, 113.1], [22.5, 112.5], [22.0, 112.5]
-            ]
-          },
-          { 
-            name: '揚州', 
-            coords: [32.3936, 119.4127],
-            bounds: [
-              [32.1, 119.1], [32.1, 119.7], [32.7, 119.7], [32.7, 119.1], [32.1, 119.1]
-            ]
-          },
-          { 
-            name: '廣州', 
-            coords: [23.1291, 113.2644],
-            bounds: [
-              [22.9, 113.0], [22.9, 113.5], [23.4, 113.5], [23.4, 113.0], [22.9, 113.0]
-            ]
-          },
-          { 
-            name: '福州', 
-            coords: [26.0745, 119.2965],
-            bounds: [
-              [25.8, 119.0], [25.8, 119.6], [26.3, 119.6], [26.3, 119.0], [25.8, 119.0]
-            ]
-          }
-        ];
-
-        // 創建台北標記 - 帶有明顯邊框
-        const taipeiIcon = L.divIcon({
-          className: 'custom-marker',
-          html: '<div style="background: #ff3333; width: 14px; height: 14px; border-radius: 50%; border: 4px solid #ffffff; box-shadow: 0 0 15px #ff3333, 0 0 5px #ffffff, inset 0 0 5px rgba(255,255,255,0.5); animation: pulse 2s infinite; cursor: pointer;"></div>',
-          iconSize: [22, 22],
-          iconAnchor: [11, 11]
-        });
-
-        // 創建城市標記 - 帶有明顯邊框
-        const cityIcon = L.divIcon({
-          className: 'custom-marker',
-          html: '<div style="background: linear-gradient(45deg, #00ff88, #00ccff); width: 12px; height: 12px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 10px #00ff88, 0 0 3px #ffffff; cursor: pointer;"></div>',
-          iconSize: [18, 18],
-          iconAnchor: [9, 9]
-        });
-
-        // 創建台北區域邊界
-        const taipeiAreaBorder = L.polygon(taipeiBounds, {
-          color: '#ff3333',
-          weight: 2,
-          opacity: 0.7,
-          fillColor: '#ff3333',
-          fillOpacity: 0.1,
-          dashArray: '5, 5'
-        }).addTo(mapInstance);
-
-        // 創建台北標記
-        taipeiMarker = L.marker(taipei, { icon: taipeiIcon })
-          .addTo(mapInstance)
-          .bindPopup('<b style="color: #ff3333;">台北 VPN 伺服器</b><br/>主要連線節點</b><br/>WAN:211.22.98.208</b><br/>LAN:192.168.10.252</b><br/></b><br/>OpenVPN_Tunnel:</b><br/>福州:172.16.201.1/24</b><br/>上海:172.16.105.1/24</b><br/>台山:10.10.101.1/24</b><br/>廣州:172.16.103.1/24');
-
-        // 為台北標記添加點擊事件
-        taipeiMarker.on('click', function(e) {
-          e.originalEvent.stopPropagation();
-          zoomToCity('台北', taipei);
-        });
-
-        // 創建城市標記和區域邊界
-        cityMarkers = [];
-        cities.forEach(city => {
-          // 創建城市區域邊界
-          const cityBorder = L.polygon(city.bounds, {
-            color: '#00ff88',
-            weight: 2,
-            opacity: 0.6,
-            fillColor: '#00ff88',
-            fillOpacity: 0.05,
-            dashArray: '3, 3'
-          }).addTo(mapInstance);
-
-          const marker = L.marker(city.coords, { icon: cityIcon })
-            .addTo(mapInstance)
-            .bindPopup(`<b style="color: #00ff88;">${city.name} 節點</b><br/>VPN 連線目標<br/`);
-          
-          // 為每個城市標記添加點擊事件
-          marker.on('click', function(e) {
-            e.originalEvent.stopPropagation();
-            zoomToCity(city.name, city.coords);
-          });
-          
-          cityMarkers.push(marker);
-        });
-
-        // 放大到指定城市
-        function zoomToCity(cityName, coords) {
-          if (isZoomedIn) return;
-          
-          isZoomedIn = true;
-          currentZoomedCity = cityName;
-          updateZoomMode(`${cityName} 區域`);
-          
-          // 添加放大動畫效果
-          const zoomCircle = L.circleMarker(coords, {
-            color: '#00ffff',
-            fillColor: 'transparent',
-            radius: 5,
-            weight: 2,
-            opacity: 0.8
-          }).addTo(mapInstance);
-          
-          let zoomRadius = 5;
-          const zoomAnimation = setInterval(() => {
-            zoomRadius += 3;
-            zoomCircle.setRadius(zoomRadius);
-            zoomCircle.setStyle({ 
-              opacity: Math.max(0, 0.8 - (zoomRadius - 5) / 30)
-            });
-            
-            if (zoomRadius > 35) {
-              clearInterval(zoomAnimation);
-              mapInstance.removeLayer(zoomCircle);
-            }
-          }, 50);
-          
-          // 平滑放大到城市
-          mapInstance.flyTo(coords, 10, {
-            duration: 1.5,
-            easeLinearity: 0.25
-          });
-        }
-
-        // 回到總覽視圖
-        function returnToOverview() {
-          if (!isZoomedIn) return;
-          
-          isZoomedIn = false;
-          currentZoomedCity = null;
-          updateZoomMode('總覽');
-          
-          // 平滑回到原始視圖
-          mapInstance.flyTo(originalView.center, originalView.zoom, {
-            duration: 1.5,
-            easeLinearity: 0.25
-          });
-        }
-
-        // 生成曲線路徑的函數
-        function generateCurvedPath(start, end, intensity = 0.3) {
-          const midLat = (start[0] + end[0]) / 2;
-          const midLng = (start[1] + end[1]) / 2;
-          
-          // 計算垂直偏移
-          const latDiff = end[0] - start[0];
-          const lngDiff = end[1] - start[1];
-          const distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
-          
-          // 隨機化曲線方向和強度
-          const randomFactor = (Math.random() - 0.5) * 2;
-          const curvature = distance * intensity * randomFactor;
-          
-          // 計算控制點
-          const controlLat = midLat + curvature * Math.sin(Math.atan2(lngDiff, latDiff));
-          const controlLng = midLng - curvature * Math.cos(Math.atan2(lngDiff, latDiff));
-          
-          // 生成多個點形成平滑曲線
-          const points = [];
-          for (let t = 0; t <= 1; t += 0.05) {
-            const lat = Math.pow(1 - t, 2) * start[0] + 2 * (1 - t) * t * controlLat + Math.pow(t, 2) * end[0];
-            const lng = Math.pow(1 - t, 2) * start[1] + 2 * (1 - t) * t * controlLng + Math.pow(t, 2) * end[1];
-            points.push([lat, lng]);
-          }
-          
-          return points;
-        }
-
-        // 創建有方向性的VPN連線動畫
-        function createBidirectionalVPNConnection(start, end, startName, endName) {
-          activeConnections++;
-          updateStatus(`建立連線: ${startName} ↔ ${endName}`);
-          
-          // 判斷方向
-          const isTaipeiStart = (start[0] === 25.033 && start[1] === 121.565);
-          
-          // 在放大模式下調整連線線條的權重和透明度
-          const lineWeight = isZoomedIn ? 3 : 2;
-          const lineOpacity = isZoomedIn ? 0.9 : 0.8;
-          
-          // 生成兩條不同的曲線路徑，避免重疊
-          const pathAtoB = generateCurvedPath(start, end, isTaipeiStart ? 0.3 : -0.3);
-          const pathBtoA = generateCurvedPath(end, start, isTaipeiStart ? -0.4 : 0.4);
-          
-          // 創建連線線條 - 放大時增強顯示
-          const connectionAtoB = L.polyline([], {
-            color: isTaipeiStart ? '#00ffff' : '#ff3333',
-            weight: lineWeight,
-            opacity: lineOpacity
-          }).addTo(mapInstance);
-          
-          const connectionBtoA = L.polyline([], {
-            color: isTaipeiStart ? '#ff3333' : '#00ffff',
-            weight: lineWeight,
-            opacity: lineOpacity
-          }).addTo(mapInstance);
-
-          // 數據流動線條 - 放大時增強顯示
-          const dataFlowAtoB = L.polyline([], {
-            color: isTaipeiStart ? '#00ff88' : '#ff6666',
-            weight: isZoomedIn ? 2 : 1,
-            opacity: isZoomedIn ? 0.8 : 0.6,
-            dashArray: isZoomedIn ? '6, 16' : '4, 12'
-          }).addTo(mapInstance);
-          
-          const dataFlowBtoA = L.polyline([], {
-            color: isTaipeiStart ? '#ff6666' : '#00ff88',
-            weight: isZoomedIn ? 2 : 1,
-            opacity: isZoomedIn ? 0.8 : 0.6,
-            dashArray: isZoomedIn ? '6, 16' : '4, 12'
-          }).addTo(mapInstance);
-
-          // 方向性連線建立動畫
-          let progressAtoB = 0;
-          let progressBtoA = 0;
-          
-          const connectionAnimation = setInterval(() => {
-            // A to B 連線延伸
-            if (progressAtoB < pathAtoB.length) {
-              progressAtoB += 2;
-              const currentPathAtoB = pathAtoB.slice(0, Math.min(progressAtoB, pathAtoB.length));
-              connectionAtoB.setLatLngs(currentPathAtoB);
-              dataFlowAtoB.setLatLngs(currentPathAtoB);
-            }
-            
-            // B to A 連線延伸 (稍微延遲)
-            if (progressAtoB > 5 && progressBtoA < pathBtoA.length) {
-              progressBtoA += 2;
-              const currentPathBtoA = pathBtoA.slice(0, Math.min(progressBtoA, pathBtoA.length));
-              connectionBtoA.setLatLngs(currentPathBtoA);
-              dataFlowBtoA.setLatLngs(currentPathBtoA);
-            }
-            
-            if (progressAtoB >= pathAtoB.length && progressBtoA >= pathBtoA.length) {
-              clearInterval(connectionAnimation);
-              
-              // 連線成功效果 - 放大時效果更明顯
-              [start, end].forEach((pos, index) => {
-                const isStartTaipei = (start[0] === 25.033 && start[1] === 121.565);
-                const successPulse = L.circleMarker(pos, {
-                  color: (index === 0 && isStartTaipei) || (index === 1 && !isStartTaipei) ? '#00ff88' : '#ff6666',
-                  fillColor: (index === 0 && isStartTaipei) || (index === 1 && !isStartTaipei) ? '#00ff88' : '#ff6666',
-                  fillOpacity: isZoomedIn ? 0.6 : 0.4,
-                  radius: isZoomedIn ? 8 : 6,
-                  weight: isZoomedIn ? 3 : 2
-                }).addTo(mapInstance);
-
-                let pulseRadius = isZoomedIn ? 8 : 6;
-                const maxRadius = isZoomedIn ? 30 : 20;
-                const pulseAnimation = setInterval(() => {
-                  pulseRadius += isZoomedIn ? 1.2 : 0.8;
-                  successPulse.setRadius(pulseRadius);
-                  successPulse.setStyle({ 
-                    fillOpacity: Math.max(0, (isZoomedIn ? 0.6 : 0.4) - (pulseRadius - (isZoomedIn ? 8 : 6)) / (isZoomedIn ? 35 : 25)),
-                    opacity: Math.max(0, (isZoomedIn ? 1.0 : 0.8) - (pulseRadius - (isZoomedIn ? 8 : 6)) / (isZoomedIn ? 25 : 20))
-                  });
-                  
-                  if (pulseRadius > maxRadius) {
-                    clearInterval(pulseAnimation);
-                    mapInstance.removeLayer(successPulse);
-                  }
-                }, 60);
-              });
-            }
-          }, 50);
-
-          // 數據流動動畫
-          setTimeout(() => {
-            let dashOffsetAtoB = 0;
-            let dashOffsetBtoA = 0;
-            
-            const flowAnimation = setInterval(() => {
-              // 根據方向設定數據流動方向，放大時流動更快
-              const speed = isZoomedIn ? 4 : 3;
-              if (isTaipeiStart) {
-                dashOffsetAtoB -= speed; // 台北到其他城市：正向流動
-                dashOffsetBtoA += speed - 0.5; // 其他城市到台北：反向流動
-              } else {
-                dashOffsetAtoB += speed; // 其他城市到台北：反向流動
-                dashOffsetBtoA -= speed - 0.5; // 台北到其他城市：正向流動
-              }
-              
-              if (dataFlowAtoB.getElement()) {
-                dataFlowAtoB.getElement().style.strokeDashoffset = dashOffsetAtoB;
-              }
-              if (dataFlowBtoA.getElement()) {
-                dataFlowBtoA.getElement().style.strokeDashoffset = dashOffsetBtoA;
-              }
-            }, 100);
-            
-            // 隨機持續時間 (4-8秒)
-            const duration = 4000 + Math.random() * 4000;
-            setTimeout(() => {
-              clearInterval(flowAnimation);
-              activeConnections--;
-              updateStatus('監控中');
-              
-              // 連線斷開動畫
-              let disconnectOpacity = lineOpacity;
-              const disconnectAnimation = setInterval(() => {
-                disconnectOpacity -= 0.06;
-                [connectionAtoB, connectionBtoA, dataFlowAtoB, dataFlowBtoA].forEach(layer => {
-                  layer.setStyle({ opacity: Math.max(disconnectOpacity, 0) });
-                });
-                
-                if (disconnectOpacity <= 0) {
-                  clearInterval(disconnectAnimation);
-                  [connectionAtoB, connectionBtoA, dataFlowAtoB, dataFlowBtoA].forEach(layer => {
-                    mapInstance.removeLayer(layer);
-                  });
-                }
-              }, 100);
-            }, duration);
-            
-          }, 1000);
-        }
-
-        // 主連線邏輯 - 只有台北與其他城市連線
-        let connectionIndex = 0;
-        function establishTaipeiConnection() {
-          // 隨機選擇連線方向和城市
-          const isFromTaipei = Math.random() > 0.4; // 60%機率從台北發起
-          const targetCity = cities[connectionIndex % cities.length];
-          
-          if (isFromTaipei) {
-            createBidirectionalVPNConnection(taipei, targetCity.coords, '台北', targetCity.name);
-          } else {
-            createBidirectionalVPNConnection(targetCity.coords, taipei, targetCity.name, '台北');
-          }
-          
-          connectionIndex++;
-        }
-
-        // 地圖點擊事件 - 點擊空白區域回到總覽
-        mapInstance.on('click', function(e) {
-          if (isZoomedIn) {
-            returnToOverview();
-          } else {
-            // 原有的波紋效果
-            const ripple = L.circleMarker(e.latlng, {
-              color: '#ffffff',
-              fillColor: '#ffffff',
-              fillOpacity: 0.6,
-              radius: 0
-            }).addTo(mapInstance);
-
-            let radius = 0;
-            const rippleAnimation = setInterval(() => {
-              radius += 2;
-              ripple.setRadius(radius);
-              ripple.setStyle({ 
-                fillOpacity: Math.max(0, 0.6 - (radius / 50)),
-                opacity: Math.max(0, 1 - (radius / 50))
-              });
-              
-              if (radius > 50) {
-                clearInterval(rippleAnimation);
-                mapInstance.removeLayer(ripple);
-              }
-            }, 25);
-          }
-        });
-
-        mapInstance.whenReady(function() {
-          setTimeout(() => {
-            updateStatus('VPN系統啟動');
-            updateZoomMode('總覽');
-            
-            // 立即建立第一個連線
-            establishTaipeiConnection();
-            
-            // 定期建立台北連線 (每4秒)
-            setInterval(establishTaipeiConnection, 4000);
-            
-            // 隨機額外台北連線
-            setInterval(() => {
-              if (Math.random() > 0.5) {
-                establishTaipeiConnection();
-              }
-            }, 6000);
-            
-          }, 1000);
-        });
-
-      } catch (error) {
-        console.error('地圖初始化錯誤:', error);
-        document.getElementById('map').innerHTML = '<div class="loading">地圖加載失敗，請刷新頁面重試</div>';
-      }
-    }
-
-    let initAttempted = false;
-    
-    function checkAndInit() {
-      if (initAttempted) return;
-      
-      if (typeof L !== 'undefined') {
-        initAttempted = true;
-        initializeMap();
-      } else {
-        setTimeout(checkAndInit, 100);
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', checkAndInit);
-    } else {
-      checkAndInit();
-    }
-
-    window.addEventListener('load', function() {
-      setTimeout(checkAndInit, 500);
-    });
-  </script>
-</body>
-      </section>
-
-
-      <!-- 9 常見問題 -->
-      <section id="faq" data-title="常見問題">
-        <div class="title">
-          <h2>常見問題 (FAQ)</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#faq">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <details open>
-          <summary>🏗️ GWall 4.0 支援哪些高可用性 (HA) 模式？</summary>
-          <p>支援 Active-Standby 與 Active-Active 兩種 HA 模式：</p>
-          <ul>
-            <li><strong>Active-Standby：</strong>主備機制，故障切換時間 < 3 秒，適合一般企業應用</li>
-            <li><strong>Active-Active：</strong>雙機負載平衡，提供更高效能與可用性，適合高流量環境</li>
-            <li><strong>狀態同步：</strong>連線表、政策、日誌即時同步，確保無縫切換</li>
-            <li><strong>健康檢查：</strong>多種檢測機制包含網路、應用、硬體狀態監控</li>
-          </ul>
-        </details>
-        
-        <details>
-          <summary>🔐 是否支援 Active Directory 整合與雙因子驗證？</summary>
-          <p>完整支援企業身份認證系統：</p>
-          <ul>
-            <li><strong>AD/LDAP 整合：</strong>支援 Windows AD、OpenLDAP、Azure AD</li>
-            <li><strong>單一登入 (SSO)：</strong>SAML 2.0、OAuth 2.0、OpenID Connect</li>
-            <li><strong>雙因子驗證：</strong>TOTP (Google Authenticator)、SMS、Email、硬體 Token</li>
-            <li><strong>RADIUS 支援：</strong>與既有 AAA 系統整合，支援 802.1X 認證</li>
-          </ul>
-        </details>
-        
-        <details>
-          <summary>⚡ 在啟用所有安全功能下，實際效能表現如何？</summary>
-          <p>GWall 4.0 採用硬體加速與效能最佳化設計：</p>
-          <ul>
-            <li><strong>防火牆 + IPS：</strong>效能影響 < 15%，延遲增加 < 100μs</li>
-            <li><strong>防毒掃描：</strong>非同步處理，對即時流量影響最小</li>
-            <li><strong>VPN 加密：</strong>硬體加速 AES-256，CPU 使用率 < 30%</li>
-            <li><strong>流量控制：</strong>支援線速 QoS 與頻寬管理</li>
-          </ul>
-        </details>
-        
-        <details>
-          <summary>🌐 如何與現有的 SIEM/SOAR 系統整合？</summary>
-          <p>提供多種整合方式與標準化介面：</p>
-          <ul>
-            <li><strong>Syslog 輸出：</strong>支援 CEF、LEEF、JSON 格式</li>
-            <li><strong>RESTful API：</strong>完整的管理與監控 API，支援自動化操作</li>
-            <li><strong>Webhook：</strong>即時事件推送，觸發 SOAR 自動化流程</li>
-            <li><strong>SNMP：</strong>標準 MIB 支援，整合網管系統</li>
-            <li><strong>預設整合：</strong>Splunk、QRadar、ArcSight 等主流 SIEM 模板</li>
-          </ul>
-        </details>
-        
-        <details>
-          <summary>🔄 威脅特徵更新機制與頻率？</summary>
-          <p>採用多層次威脅情報更新機制：</p>
-          <ul>
-            <li><strong>自動更新：</strong>每日定期更新，無需人工干預</li>
-            <li><strong>緊急推送：</strong>重大威脅 2 小時內推送更新</li>
-            <li><strong>多源情報：</strong>整合商業威脅情報與開源 IOC</li>
-            <li><strong>本地快取：</strong>更新失敗時使用本地快取，不影響防護能力</li>
-            <li><strong>測試驗證：</strong>更新前經過實驗室驗證，確保穩定性</li>
-          </ul>
-        </details>
-        
-        <details>
-          <summary>💾 日誌保存與合規性要求？</summary>
-          <p>滿足各種法規的日誌保存要求：</p>
-          <ul>
-            <li><strong>本地儲存：</strong>可設定 3-36 個月本地保存期限</li>
-            <li><strong>外部備份：</strong>支援 NFS、CIFS、S3 等外部儲存</li>
-            <li><strong>加密保護：</strong>日誌檔案 AES-256 加密儲存</li>
-            <li><strong>完整性驗證：</strong>數位簽章確保日誌未被竄改</li>
-            <li><strong>法規模板：</strong>預設 GDPR、HIPAA、SOX 等合規報表</li>
-          </ul>
-        </details>
-      </section>
-
-      <!-- 10 下載資源 -->
-      <section id="downloads" data-title="下載資源">
-        <div class="title">
-          <h2>技術文件與下載資源</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#downloads">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <div class="grid cols-2">
-          <div class="card">
-            <b>📋 產品文件</b><br>
-            <small>
-              <a href="#" style="color: var(--neon-blue);">📄 產品型錄 (PDF, 8.5MB)</a><br>
-              <a href="#" style="color: var(--neon-blue);">📊 技術規格表 (PDF, 2.1MB)</a><br>
-              <a href="#" style="color: var(--neon-blue);">🏗️ 部署指南 (PDF, 15.2MB)</a><br>
-              <a href="#" style="color: var(--neon-blue);">⚙️ 管理手冊 (PDF, 25.8MB)</a>
-            </small>
-          </div>
-          <div class="card">
-            <b>🛠️ 工具與韌體</b><br>
-            <small>
-              <a href="#" style="color: var(--neon-blue);">💿 最新韌體 v4.2.1 (ZIP, 156MB)</a><br>
-              <a href="#" style="color: var(--neon-blue);">🖥️ 集中管理工具 (EXE, 89MB)</a><br>
-              <a href="#" style="color: var(--neon-blue);">📱 行動管理 App (Android/iOS)</a><br>
-              <a href="#" style="color: var(--neon-blue);">🔧 配置範本庫 (JSON, 5.2MB)</a>
-            </small>
-          </div>
-          <div class="card">
-            <b>🎓 教育資源</b><br>
-            <small>
-              <a href="#" style="color: var(--neon-blue);">🎬 產品介紹影片 (20分鐘)</a><br>
-              <a href="#" style="color: var(--neon-blue);">👨‍🏫 線上培訓課程 (4小時)</a><br>
-              <a href="#" style="color: var(--neon-blue);">📚 最佳實務白皮書</a><br>
-              <a href="#" style="color: var(--neon-blue);">🏆 認證考試資訊</a>
-            </small>
-          </div>
-          <div class="card">
-            <b>🔍 技術支援</b><br>
-            <small>
-              <a href="#" style="color: var(--neon-blue);">❓ 知識庫 (800+ 文章)</a><br>
-              <a href="#" style="color: var(--neon-blue);">🎫 線上工單系統</a><br>
-              <a href="#" style="color: var(--neon-blue);">💬 社群論壇</a><br>
-              <a href="#" style="color: var(--neon-blue);">📞 技術支援熱線</a>
-            </small>
-          </div>
-        </div>
-        
-        <div class="alert info" style="margin-top: 20px;">
-          <strong>🔒 存取權限：</strong>部分進階文件需要合作夥伴帳號或產品註冊後方可下載。如需協助請聯繫我們的技術支援團隊。
-        </div>
-      </section>
-
-      <!-- 11 聯絡我們 -->
-      <section id="contact" data-title="聯絡我們">
-        <div class="title">
-          <h2>聯絡我們</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#contact">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        
-        <div class="grid cols-3" style="margin-bottom: 24px;">
-          <div class="card feature">
-            <div class="icon">📞</div>
-            <div>
-              <b>銷售諮詢</b><br>
-              <small>電話：0800-123-456<br>
-              Email: sales@angroup.com<br>
-              服務時間：週一至五 9:00-18:00</small>
-            </div>
-          </div>
-          <div class="card feature">
-            <div class="icon">🛠️</div>
-            <div>
-              <b>技術支援</b><br>
-              <small>電話：0800-789-012<br>
-              Email: support@angroup.com<br>
-              24x7 緊急支援熱線</small>
-            </div>
-          </div>
-          <div class="card feature">
-            <div class="icon">🏢</div>
-            <div>
-              <b>台灣總部</b><br>
-              <small>台北市信義區信義路五段 7 號<br>
-              台北 101 大樓 45 樓<br>
-              郵遞區號：110</small>
-            </div>
-          </div>
-        </div>
-        
-        <form id="contactForm" class="grid cols-2">
-          <input class="card" name="name" placeholder="您的姓名 *" required />
-          <input class="card" name="email" placeholder="Email 信箱 *" required type="email"/>
-          <input class="card" name="company" placeholder="公司/機構名稱" />
-          <input class="card" name="phone" placeholder="聯絡電話" />
-          <select class="card" name="interest">
-            <option value="">請選擇感興趣的產品</option>
-            <option value="gwall-2000">GWall-2000 系列</option>
-            <option value="gwall-5000">GWall-5000 系列</option>
-            <option value="enterprise">企業級解決方案</option>
-            <option value="consulting">顧問服務</option>
-            <option value="training">教育訓練</option>
-          </select>
-          <select class="card" name="deployment">
-            <option value="">預計部署時程</option>
-            <option value="immediate">立即 (1個月內)</option>
-            <option value="quarter">本季 (3個月內)</option>
-            <option value="half-year">半年內</option>
-            <option value="planning">規劃評估中</option>
-          </select>
-          <textarea class="card" name="message" placeholder="詳細需求說明，例如：&#10;• 現有網路環境與使用者規模&#10;• 特殊安全需求或合規要求&#10;• 預算考量與期望效益&#10;• 其他技術問題或整合需求" rows="4" style="grid-column: span 2;"></textarea>
-          <div class="card" style="grid-column: span 2; display: flex; align-items: center; gap: 12px;">
-            <input type="checkbox" id="privacy" name="privacy" required style="margin: 0;">
-            <label for="privacy" style="font-size: 0.9rem; color: var(--muted);">
-              我同意 <a href="#" style="color: var(--neon-blue);">隱私政策</a> 並願意接收產品相關資訊
-            </label>
-          </div>
-          <button type="submit" class="btn pulse" style="grid-column: span 2;">🚀 立即索取產品資訊</button>
-        </form>
-        
-        <div class="alert success" style="margin-top: 20px;">
-          <strong>📧 快速回應承諾：</strong>我們將在收到您的詢問後 2 小時內回覆（工作時間），並安排專業技術顧問與您聯繫，提供客製化解決方案建議。
-        </div>
-        
-        <details style="margin-top: 20px;">
-          <summary>合作夥伴通路</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>🤝 系統整合商夥伴</b><br>
-              <small>尋找當地認證的系統整合商？我們在全台有 50+ 家合作夥伴，提供在地化服務支援。</small>
-            </div>
-            <div class="card">
-              <b>🎓 教育訓練中心</b><br>
-              <small>提供原廠認證課程、技術研習會以及客製化企業內訓服務。</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>展示中心與體驗</summary>
-          <p>歡迎預約參觀我們的解決方案展示中心，現場體驗 GWall 4.0 的完整功能：</p>
-          <ul>
-            <li><strong>🏢 台北展示中心：</strong>台北市信義區 - 完整產品線展示與 PoC 測試環境</li>
-            <li><strong>🏢 台中服務中心：</strong>台中市西屯區 - 中部地區技術支援與展示</li>
-            <li><strong>🏢 高雄辦公室：</strong>高雄市前鎮區 - 南部地區客戶服務</li>
-            <li><strong>☁️ 線上展示：</strong>透過 WebEx 提供遠端產品展示與技術諮詢</li>
-          </ul>
-        </details>
-      </section>
-
-      <!-- 12 附錄：技術詞彙 -->
-      <section id="glossary" data-title="技術詞彙">
-        <div class="title">
-          <h2>技術詞彙表</h2>
-          <div class="toolbar">
-            <button class="icon-btn" data-copy="#glossary">🔗</button>
-            <button class="icon-btn" data-collapse>－</button>
-          </div>
-        </div>
-        <p class="meta">常見網路安全與 GWall 4.0 相關技術名詞解釋</p>
-        
-        <details open>
-          <summary>核心技術縮寫</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>IDS/IPS</b><br>
-              <small><strong>Intrusion Detection/Prevention System</strong><br>入侵檢測/防護系統，監控並阻斷惡意網路活動</small>
-            </div>
-            <div class="card">
-              <b>UTM</b><br>
-              <small><strong>Unified Threat Management</strong><br>統一威脅管理，整合多種安全功能於單一平台</small>
-            </div>
-            <div class="card">
-              <b>NGFW</b><br>
-              <small><strong>Next-Generation Firewall</strong><br>次世代防火牆，具備應用感知與深度檢測能力</small>
-            </div>
-            <div class="card">
-              <b>DPI</b><br>
-              <small><strong>Deep Packet Inspection</strong><br>深度封包檢測，分析封包內容與應用行為</small>
-            </div>
-            <div class="card">
-              <b>SASE</b><br>
-              <small><strong>Secure Access Service Edge</strong><br>安全存取服務邊緣，雲端化網路安全架構</small>
-            </div>
-            <div class="card">
-              <b>ZTNA</b><br>
-              <small><strong>Zero Trust Network Access</strong><br>零信任網路存取，基於身份的精細化存取控制</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>VPN 技術名詞</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>IPSec</b><br>
-              <small><strong>Internet Protocol Security</strong><br>網路層 VPN 協定，提供端對端加密傳輸</small>
-            </div>
-            <div class="card">
-              <b>IKE</b><br>
-              <small><strong>Internet Key Exchange</strong><br>IPSec 金鑰交換協定，負責建立安全通道</small>
-            </div>
-            <div class="card">
-              <b>SSL VPN</b><br>
-              <small><strong>Secure Sockets Layer VPN</strong><br>應用層 VPN，透過 Web 瀏覽器建立安全連線</small>
-            </div>
-            <div class="card">
-              <b>WireGuard</b><br>
-              <small><strong>現代化 VPN 協定</strong><br>輕量級、高效能的新世代 VPN 解決方案</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>安全威脅類型</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>APT</b><br>
-              <small><strong>Advanced Persistent Threat</strong><br>進階持續威脅，長期潛伏的目標性攻擊</small>
-            </div>
-            <div class="card">
-              <b>DDoS</b><br>
-              <small><strong>Distributed Denial of Service</strong><br>分散式阻斷服務攻擊，癱瘓目標系統</small>
-            </div>
-            <div class="card">
-              <b>Botnet</b><br>
-              <small><strong>殭屍網路</strong><br>被惡意軟體控制的電腦網路，用於發動攻擊</small>
-            </div>
-            <div class="card">
-              <b>Zero-day</b><br>
-              <small><strong>零日漏洞</strong><br>尚未發布修補程式的安全漏洞</small>
-            </div>
-          </div>
-        </details>
-        
-        <details>
-          <summary>網路與效能指標</summary>
-          <div class="grid cols-2">
-            <div class="card">
-              <b>Throughput</b><br>
-              <small><strong>吞吐量</strong><br>單位時間內處理的資料量，通常以 Gbps 或 Mbps 表示</small>
-            </div>
-            <div class="card">
-              <b>Latency</b><br>
-              <small><strong>延遲</strong><br>封包從來源到目的地的傳輸時間</small>
-            </div>
-            <div class="card">
-              <b>PPS</b><br>
-              <small><strong>Packets Per Second</strong><br>每秒處理封包數，衡量設備處理能力</small>
-            </div>
-            <div class="card">
-              <b>Concurrent Sessions</b><br>
-              <small><strong>併發連線</strong><br>設備同時維護的網路連線數量</small>
-            </div>
-          </div>
-        </details>
-      </section>
-    </main>
+      </div>
+      <div class="form-field">
+        <div class="ff-label">時間描述</div>
+        <input class="ff-input" id="plan-time" type="text" placeholder="例：09:00 – 16:00 或 全天">
+      </div>
+      <div class="ff-label" style="margin-bottom:8px;">選擇圖示</div>
+      <div class="icon-picker" id="icon-picker">
+        <button class="icon-opt sel" data-ico="🏢" onclick="pickIcon(this)">🏢</button>
+        <button class="icon-opt" data-ico="👩" onclick="pickIcon(this)">👩</button>
+        <button class="icon-opt" data-ico="👨" onclick="pickIcon(this)">👨</button>
+        <button class="icon-opt" data-ico="💤" onclick="pickIcon(this)">💤</button>
+        <button class="icon-opt" data-ico="🏥" onclick="pickIcon(this)">🏥</button>
+        <button class="icon-opt" data-ico="🌿" onclick="pickIcon(this)">🌿</button>
+        <button class="icon-opt" data-ico="☕" onclick="pickIcon(this)">☕</button>
+        <button class="icon-opt" data-ico="🎵" onclick="pickIcon(this)">🎵</button>
+      </div>
+      <button class="ma-p" style="width:100%;margin-top:18px;" onclick="addPlan()">✅ 確認新增</button>
+    </div>
   </div>
 
-  <button id="topBtn" title="回到頂部">▲</button>
+  <!-- Bottom nav -->
+  <nav class="bnav">
+    <button class="nbtn on" data-pg="p-home" onclick="navTo('p-home')"><span class="ni">🏠</span><span class="nl">首頁</span></button>
+    <button class="nbtn" data-pg="p-med" onclick="navTo('p-med')"><span class="ni">💊</span><span class="nl">用藥</span></button>
+    <button class="nbtn" data-pg="p-report" onclick="navTo('p-report')"><span class="ni">📊</span><span class="nl">報表</span></button>
+    <button class="nbtn" data-pg="p-stress" onclick="navTo('p-stress')"><span class="ni">🧠</span><span class="nl">壓力</span></button>
+    <button class="nbtn" data-pg="p-respite" onclick="navTo('p-respite')"><span class="ni">📅</span><span class="nl">喘息</span></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
 
 <script>
-// 創建粒子效果
-function createParticles() {
-  const container = document.getElementById('particles');
-  const particleCount = 50;
-  
-  for (let i = 0; i < particleCount; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.top = Math.random() * 100 + '%';
-    particle.style.animationDelay = Math.random() * 6 + 's';
-    particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-    
-    // 隨機顏色
-    const colors = ['#00d4ff', '#7c3aed', '#10b981'];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    particle.style.background = color;
-    particle.style.boxShadow = `0 0 10px ${color}`;
-    
-    container.appendChild(particle);
+const TAB_ORDER = ['p-home','p-med','p-report','p-stress','p-respite'];
+let curPage = 'p-home';
+let navStack = ['p-home'];
+
+// Init: push all off-screen right
+document.querySelectorAll('.page:not(.active)').forEach(p => p.style.transform = 'translateX(100%)');
+
+function resetSOSContacts() {
+  lineSentSet.clear();
+  const s1 = document.getElementById('cc1-status');
+  const s2 = document.getElementById('cc2-status');
+  if (s1) s1.innerHTML = 'LINE + 電話';
+  if (s2) s2.innerHTML = 'LINE 通知';
+}
+
+function navTo(id, hint) {
+  if (id === curPage) return;
+  // Reset SOS state when leaving SOS page
+  if (curPage === 'p-sos') resetSOS();
+  // Reset SOS contacts every time we enter SOS fresh
+  if (id === 'p-sos') resetSOSContacts();
+  const prev = document.getElementById(curPage);
+  const next = document.getElementById(id);
+  const prevIdx = TAB_ORDER.indexOf(curPage);
+  const nextIdx = TAB_ORDER.indexOf(id);
+  let fwd;
+  if (hint === 'fwd') fwd = true;
+  else if (hint === 'back') fwd = false;
+  else fwd = nextIdx >= prevIdx || prevIdx === -1;
+  prev.classList.remove('active');
+  prev.style.transition = 'transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94)';
+  prev.style.transform = fwd ? 'translateX(-100%)' : 'translateX(100%)';
+  next.style.transition = 'none';
+  next.style.transform = fwd ? 'translateX(100%)' : 'translateX(-100%)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    next.style.transition = 'transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94)';
+    next.style.transform = 'translateX(0)';
+    next.classList.add('active');
+  }));
+  const stackIdx = navStack.indexOf(id);
+  if (stackIdx !== -1) navStack.splice(stackIdx);
+  navStack.push(id);
+  curPage = id;
+  next.scrollTop = 0;
+  document.querySelectorAll('.nbtn').forEach(b => b.classList.toggle('on', b.dataset.pg === id));
+  onPageEnter(id);
+}
+
+function goBack() {
+  if (navStack.length <= 1) return;
+  navStack.pop();
+  const prev = navStack[navStack.length - 1];
+  const wasPage = curPage;
+  curPage = prev;
+  // Reset SOS state when leaving
+  if (wasPage === 'p-sos') resetSOS();
+  // Reset contacts if going back to SOS
+  if (prev === 'p-sos') resetSOSContacts();
+  const prevEl = document.getElementById(wasPage);
+  const nextEl = document.getElementById(prev);
+  prevEl.classList.remove('active');
+  prevEl.style.transition = 'transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94)';
+  prevEl.style.transform = 'translateX(100%)';
+  nextEl.style.transition = 'none';
+  nextEl.style.transform = 'translateX(-100%)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    nextEl.style.transition = 'transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94)';
+    nextEl.style.transform = 'translateX(0)';
+    nextEl.classList.add('active');
+  }));
+  nextEl.scrollTop = 0;
+  document.querySelectorAll('.nbtn').forEach(b => b.classList.toggle('on', b.dataset.pg === prev));
+  onPageEnter(prev);
+}
+
+// Called every time a page becomes visible
+function onPageEnter(id) {
+  if (id === 'p-sos') {
+    resetSOS();
+    resetSOSContacts();
   }
 }
 
-// 初始化粒子
-createParticles();
-
-// 添加 CSS Keyframes
-const style = document.createElement('style');
-style.textContent = `
-@keyframes ripple {
-  from { width: 0; height: 0; opacity: 0.6; }
-  to { width: 420px; height: 420px; opacity: 0; }
+// ── SOS main ─────────────────────────────────────
+function triggerSOS() {
+  document.getElementById('sos-idle').style.display = 'none';
+  const s = document.getElementById('sos-sending');
+  s.classList.add('on');
+  setTimeout(() => { s.classList.remove('on'); document.getElementById('sos-done').classList.add('on'); }, 2400);
 }
-`;
-document.head.appendChild(style);
-
-// -------- 互動工具：ripple --------
-function addRipple(e){
-  const rect = e.currentTarget.getBoundingClientRect();
-  const s = document.createElement('span');
-  s.className='ripple';
-  s.style.left = (e.clientX - rect.left) + 'px';
-  s.style.top  = (e.clientY - rect.top)  + 'px';
-  s.style.background = 'rgba(0,212,255,0.3)';
-  s.style.position = 'absolute';
-  s.style.borderRadius = '50%';
-  s.style.transform = 'translate(-50%,-50%)';
-  s.style.animation = 'ripple 0.6s linear';
-  s.style.pointerEvents = 'none';
-  e.currentTarget.style.position = 'relative';
-  e.currentTarget.appendChild(s);
-  setTimeout(()=>s.remove(), 650);
+function resetSOS() {
+  document.getElementById('sos-idle').style.display = '';
+  document.getElementById('sos-sending').classList.remove('on');
+  document.getElementById('sos-done').classList.remove('on');
+  // 不清除 LINE 狀態，讓聯絡人狀態保留
 }
 
-// 為所有按鈕添加ripple效果
-document.addEventListener('DOMContentLoaded', function() {
-  Array.from(document.querySelectorAll('.btn, .icon-btn')).forEach(b=>b.addEventListener('click',addRipple));
-});
+// ── Calling overlay ───────────────────────────────
+let callInterval = null;
+let callSeconds = 0;
+let muted = false;
+let speakerOn = false;
+let callConnected = false;
 
-// -------- 目錄自動生成 / ScrollSpy --------
-const tocLinks = document.getElementById('tocLinks');
-const sections = Array.from(document.querySelectorAll('main section'));
+function startCall(name, avatar, number) {
+  document.getElementById('call-name').textContent = name;
+  document.getElementById('call-avatar').textContent = avatar;
+  document.getElementById('call-number').textContent = number;
+  document.getElementById('call-status-txt').textContent = '正在撥號…';
+  document.getElementById('call-timer').style.visibility = 'hidden';
+  muted = false; speakerOn = false; callConnected = false;
+  document.getElementById('btn-mute').textContent = '🎙️';
+  document.getElementById('btn-speaker').textContent = '🔊';
+  document.getElementById('calling-overlay').classList.add('on');
 
-function buildTOC(){
-  tocLinks.innerHTML = sections.map(s=>`<a href="#${s.id}">🔹 ${s.dataset.title||s.querySelector('h2').textContent}</a>`).join('');
-}
-
-buildTOC();
-const tocAnchors = Array.from(tocLinks.querySelectorAll('a'));
-
-// Intersection Observer for scroll spy
-const io = new IntersectionObserver(entries=>{
-  entries.forEach(en=>{
-    if(en.isIntersecting){
-      tocAnchors.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+en.target.id));
-    }
-  });
-},{rootMargin:'-40% 0px -55% 0px',threshold:.01});
-
-sections.forEach(s=>io.observe(s));
-
-// 平滑捲動
-document.addEventListener('click', e=>{
-  const a = e.target.closest('a[href^="#"]');
-  if(!a) return;
-  const id = a.getAttribute('href');
-  const el = document.querySelector(id);
-  if(el){ 
-    e.preventDefault(); 
-    el.scrollIntoView({behavior:'smooth', block:'start'}); 
-    
-    // 添加點擊動畫
-    el.style.transform = 'scale(1.02)';
-    el.style.transition = 'transform 0.3s ease';
-    setTimeout(() => {
-      el.style.transform = 'scale(1)';
-    }, 300);
-  }
-});
-
-// 回頂按鈕
-const topBtn = document.getElementById('topBtn');
-window.addEventListener('scroll',()=>{
-  const y = window.scrollY;
-  topBtn.classList.toggle('show', y>400);
-});
-
-topBtn.addEventListener('click', ()=>{
-  window.scrollTo({top:0,behavior:'smooth'});
-  // 創建人工事件來觸發 ripple
-  const rect = topBtn.getBoundingClientRect();
-  const event = {
-    currentTarget: topBtn,
-    clientX: rect.left + rect.width/2,
-    clientY: rect.top + rect.height/2
-  };
-  addRipple(event);
-});
-
-// 摺疊/展開工具列
-Array.from(document.querySelectorAll('[data-collapse]')).forEach(b=>{
-  b.addEventListener('click',()=>{
-    const section = b.closest('section');
-    const details = section.querySelectorAll('details');
-    
-    if(details.length > 0) {
-      const allOpen = Array.from(details).every(d => d.open);
-      details.forEach(d => d.open = !allOpen);
-      b.textContent = allOpen ? '＋' : '－';
-    } else {
-      // 如果沒有 details，則隱藏/顯示其他內容
-      section.classList.toggle('collapsed');
-      const content = Array.from(section.children).slice(1);
-      content.forEach(c => c.style.display = section.classList.contains('collapsed') ? 'none' : '');
-      b.textContent = section.classList.contains('collapsed') ? '＋' : '－';
-    }
-  });
-});
-
-// 複製章節連結
-Array.from(document.querySelectorAll('[data-copy]')).forEach(b=>{
-  b.addEventListener('click',()=>{
-    const id = b.getAttribute('data-copy');
-    const url = location.origin + location.pathname + id;
-    navigator.clipboard.writeText(url).then(()=>{
-      const originalText = b.textContent;
-      b.textContent='✅'; 
-      b.style.color='#10b981';
-      setTimeout(()=>{
-        b.textContent = originalText;
-        b.style.color='';
-      },1200);
-    }).catch(()=>{
-      // Fallback for browsers that don't support clipboard API
-      const textArea = document.createElement('textarea');
-      textArea.value = url;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      
-      const originalText = b.textContent;
-      b.textContent='📋';
-      b.style.color='#10b981';
-      setTimeout(()=>{
-        b.textContent = originalText;
-        b.style.color='';
-      },1200);
-    });
-  });
-});
-
-// Tabs 切換
-Array.from(document.querySelectorAll('[data-tabs]')).forEach(group=>{
-  const tabs = group.querySelectorAll('.tab');
-  const panels = group.parentElement.querySelectorAll('.tab-panel');
-  
-  group.addEventListener('click',e=>{
-    const t = e.target.closest('.tab'); 
-    if(!t) return;
-    
-    tabs.forEach(x=>x.classList.toggle('active', x===t));
-    panels.forEach(p=>p.classList.toggle('active', p.id===t.dataset.tab));
-    
-    // 添加切換動畫
-    const activePanel = group.parentElement.querySelector('.tab-panel.active');
-    if(activePanel) {
-      activePanel.style.opacity = '0';
-      activePanel.style.transform = 'translateY(10px)';
-      setTimeout(() => {
-        activePanel.style.opacity = '1';
-        activePanel.style.transform = 'translateY(0)';
-        activePanel.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-      }, 50);
-    }
-  });
-});
-
-// 全展開/收合
-document.getElementById('expandAll').addEventListener('click', e=>{
-  const allDetails = document.querySelectorAll('details');
-  const openCount = Array.from(allDetails).filter(d=>d.open).length;
-  const toOpen = openCount < allDetails.length / 2; // 如果少於一半是開啟的就全部展開
-  
-  allDetails.forEach(d=>{
-    d.open = toOpen;
-    if(toOpen) {
-      d.style.animation = 'details-open 0.3s ease';
-    }
-  });
-  
-  // 按鈕文字動態更新
-  e.target.textContent = toOpen ? '收合全部' : '展開全部';
+  // Simulate pick up after 3s
   setTimeout(() => {
-    e.target.textContent = '展開全部';
+    if (!document.getElementById('calling-overlay').classList.contains('on')) return;
+    callConnected = true;
+    document.getElementById('call-status-txt').textContent = '通話中';
+    document.getElementById('call-timer').style.visibility = 'visible';
+    callSeconds = 0;
+    updateTimer();
+    callInterval = setInterval(updateTimer, 1000);
   }, 3000);
-});
-
-// 搜尋功能
-const searchInput = document.getElementById('searchInput');
-const clearSearch = document.getElementById('clearSearch');
-
-function performSearch() {
-  const query = searchInput.value.trim().toLowerCase();
-  let hasResults = false;
-  
-  sections.forEach(section => {
-    const content = section.textContent.toLowerCase();
-    const shouldShow = !query || content.includes(query);
-    
-    section.style.display = shouldShow ? '' : 'none';
-    
-    if(shouldShow && query) {
-      hasResults = true;
-      // 高亮搜尋結果
-      section.style.borderColor = 'var(--neon-blue)';
-      section.style.boxShadow = '0 0 20px rgba(0,212,255,0.3)';
-      setTimeout(() => {
-        section.style.borderColor = '';
-        section.style.boxShadow = '';
-      }, 2000);
-    }
-  });
-  
-  // 如果有搜尋但沒有結果，顯示提示
-  const noResults = document.getElementById('noResults');
-  if(noResults) noResults.remove();
-  
-  if(query && !hasResults) {
-    const noResultsDiv = document.createElement('div');
-    noResultsDiv.id = 'noResults';
-    noResultsDiv.className = 'alert warning';
-    noResultsDiv.innerHTML = `<strong>🔍 找不到相關內容</strong><br>請嘗試其他關鍵字，例如：防火牆、VPN、IPS、零信任等`;
-    document.querySelector('main').appendChild(noResultsDiv);
-  }
 }
 
-let searchTimeout;
-searchInput.addEventListener('input', () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(performSearch, 300); // 延遲搜尋避免過於頻繁
-});
+function updateTimer() {
+  callSeconds++;
+  const m = String(Math.floor(callSeconds / 60)).padStart(2,'0');
+  const s = String(callSeconds % 60).padStart(2,'0');
+  document.getElementById('call-timer').textContent = `${m}:${s}`;
+}
 
-clearSearch.addEventListener('click', () => {
-  searchInput.value = '';
-  performSearch();
-  searchInput.focus();
-});
+function endCall() {
+  clearInterval(callInterval);
+  callInterval = null;
+  document.getElementById('calling-overlay').classList.remove('on');
+  if (callConnected) showToast('📞 通話結束');
+  else showToast('📵 已取消撥號');
+}
 
-// 表單提交
-document.getElementById('contactForm').addEventListener('submit', e => {
-  e.preventDefault();
-  
-  const submitBtn = e.target.querySelector('button[type="submit"]');
-  const formData = new FormData(e.target);
-  
-  // 檢查必填欄位
-  const requiredFields = e.target.querySelectorAll('[required]');
-  let isValid = true;
-  
-  requiredFields.forEach(field => {
-    if(!field.value.trim()) {
-      field.style.borderColor = '#ef4444';
-      isValid = false;
-    } else {
-      field.style.borderColor = '';
-    }
-  });
-  
-  if(!isValid) {
-    submitBtn.textContent = '❌ 請填寫必填欄位';
-    submitBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-    setTimeout(() => {
-      submitBtn.textContent = '🚀 立即索取產品資訊';
-      submitBtn.style.background = '';
-    }, 3000);
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('btn-mute').textContent = muted ? '🔇' : '🎙️';
+  document.getElementById('btn-mute').style.background = muted ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.15)';
+}
+
+function toggleSpeaker() {
+  speakerOn = !speakerOn;
+  document.getElementById('btn-speaker').textContent = speakerOn ? '📢' : '🔊';
+  document.getElementById('btn-speaker').style.background = speakerOn ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.15)';
+}
+
+// ── LINE notify overlay ───────────────────────────
+const lineSentSet = new Set();
+
+function sendLine(contactId, name) {
+  if (lineSentSet.has(contactId)) { showToast('💬 訊息已送出'); return; }
+  lineSentSet.add(contactId);
+
+  // Update status text on contact row
+  document.getElementById(contactId + '-status').innerHTML = '<span style="color:var(--green);font-weight:700;">✅ LINE 已送出</span>';
+
+  // Set notification name
+  document.getElementById('ln-name-1').textContent = name;
+  document.getElementById('ln-msg-1').textContent = `阿嬤發送了緊急求助通知！📍 位置已分享，請盡快確認。`;
+
+  // Show overlay
+  const overlay = document.getElementById('line-overlay');
+  overlay.classList.add('on');
+
+  // Stagger notifications in
+  setTimeout(() => document.getElementById('line-notif-1').classList.add('show'), 80);
+  setTimeout(() => document.getElementById('line-notif-2').classList.add('show'), 350);
+}
+
+function dismissLine() {
+  const overlay = document.getElementById('line-overlay');
+  overlay.classList.remove('on');
+  document.getElementById('line-notif-1').classList.remove('show');
+  document.getElementById('line-notif-2').classList.remove('show');
+}
+
+// ── Med modal ────────────────────────────────────
+function openMedModal() { document.getElementById('med-modal').classList.add('on'); }
+function closeMedModal(e) {
+  if (!e || e.target === document.getElementById('med-modal'))
+    document.getElementById('med-modal').classList.remove('on');
+}
+
+// ── Warn box: show after 30 real seconds (demo: 30s) ─────────
+// For demo purposes we use 10 seconds so you can see it in action
+let warnTimer = setTimeout(() => {
+  const wb = document.getElementById('warn-box');
+  wb.style.display = 'block';
+  wb.style.animation = 'slideUp 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+}, 10000); // 10 seconds for demo (real app: 30*60*1000)
+
+// ── Stress ───────────────────────────────────────
+let selectedStress = null;
+
+function pickStress(el) {
+  document.querySelectorAll('.emo-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedStress = { emoji: el.dataset.emoji, level: el.dataset.level };
+
+  // Live-update today's trend dot preview
+  const dot = document.getElementById('today-trend-dot');
+  const levelMap = { green: 'var(--green-l)', yellow: '#FFFFF0', red: 'var(--red-l)' };
+  dot.style.background = levelMap[selectedStress.level];
+  dot.style.fontSize = '15px';
+  dot.style.color = '';
+  dot.textContent = selectedStress.emoji;
+}
+
+function submitStress() {
+  if (!selectedStress) {
+    showToast('⚠️ 請先選擇今天的狀態！');
+    // Shake the emoji row
+    const row = document.querySelector('.emo-row');
+    row.style.animation = 'none';
+    row.offsetHeight; // reflow
+    row.style.animation = 'shake 0.4s ease';
     return;
   }
-  
-  // 模擬送出過程
-  submitBtn.textContent = '⏳ 處理中...';
-  submitBtn.disabled = true;
-  
-  setTimeout(() => {
-    submitBtn.textContent = '✅ 已送出';
-    submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-    
-    setTimeout(() => {
-      // 顯示成功訊息
-      const successMsg = document.createElement('div');
-      successMsg.className = 'alert success';
-      successMsg.innerHTML = `
-        <strong>🎉 感謝您的詢問！</strong><br>
-        我們已收到您的需求，專業顧問將在 2 小時內與您聯繫。<br>
-        同時，您也會收到一封包含產品資訊的 Email。
-      `;
-      e.target.parentNode.insertBefore(successMsg, e.target);
-      
-      // 重置表單
-      e.target.reset();
-      submitBtn.textContent = '🚀 立即索取產品資訊';
-      submitBtn.style.background = '';
-      submitBtn.disabled = false;
-      
-      // 3秒後移除成功訊息
-      setTimeout(() => {
-        successMsg.remove();
-      }, 8000);
-    }, 1000);
-  }, 2000);
-});
+  // Confirm the trend dot
+  const dot = document.getElementById('today-trend-dot');
+  const levelMap = { green: 'var(--green-l)', yellow: '#FFFFF0', red: 'var(--red-l)' };
+  dot.style.background = levelMap[selectedStress.level];
+  dot.style.fontSize = '15px';
+  dot.textContent = selectedStress.emoji;
 
-// 滾動視差效果
-let ticking = false;
-function updateScrollEffects() {
-  const scrolled = window.pageYOffset;
-  const rate = scrolled * -0.2;
-  
-  // 背景視差效果
-  document.body.style.backgroundPosition = `center ${rate}px`;
-  
-  // 卡片浮起效果
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card, index) => {
-    const rect = card.getBoundingClientRect();
-    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-    
-    if (isVisible) {
-      const progress = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / window.innerHeight));
-      const transform = Math.max(0, (1 - progress) * 10);
-      const opacity = Math.max(0.3, progress);
-      
-      card.style.transform = `translateY(${transform}px)`;
-      card.style.opacity = opacity;
-    }
-  });
-  
-  ticking = false;
+  // Show/hide alert based on level
+  const alertStrip = document.getElementById('stress-alert-strip');
+  alertStrip.style.display = selectedStress.level === 'red' ? 'flex' : 'none';
+
+  showToast('✅ 今日壓力狀態已記錄！');
 }
 
-window.addEventListener('scroll', () => {
-  if (!ticking) {
-    requestAnimationFrame(updateScrollEffects);
-    ticking = true;
-  }
-});
+// ── Respite plan data & rendering ────────────────
+const DAY_LABELS = ['一','二','三','四','五','六','日'];
+let plans = [
+  { id:1, day:0, name:'日照中心',  time:'09:00 – 16:00', icon:'🏢' },
+  { id:2, day:2, name:'女兒照顧',  time:'全天',           icon:'👩' },
+  { id:3, day:4, name:'居家休息',  time:'全天',           icon:'💤' },
+];
+let nextPlanId = 4;
+let selectedDay = null; // null = show all
 
-// 進度條動畫
-const progressBars = document.querySelectorAll('.progress-fill');
-const progressObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const width = entry.target.style.width;
-      entry.target.style.width = '0%';
-      setTimeout(() => {
-        entry.target.style.width = width;
-        entry.target.style.transition = 'width 2s ease-out';
-      }, 100);
-    }
-  });
-}, { threshold: 0.1 });
+function renderRespite() {
+  renderWeekStrip();
+  renderPlanList();
+  renderReminder();
+}
 
-progressBars.forEach(bar => progressObserver.observe(bar));
+function renderWeekStrip() {
+  const strip = document.getElementById('week-strip');
+  strip.innerHTML = '';
+  DAY_LABELS.forEach((label, idx) => {
+    const dayPlans = plans.filter(p => p.day === idx);
+    const hasPlan = dayPlans.length > 0;
+    const isSelected = selectedDay === idx;
+    const cell = document.createElement('div');
+    cell.className = 'w-d' + (hasPlan ? ' has' : '') + (isSelected ? ' selected-day' : '');
+    cell.onclick = () => selectDay(idx);
 
-// 統計數字動畫
-function animateNumbers() {
-  const statNumbers = document.querySelectorAll('.stat-card .number');
-  statNumbers.forEach(element => {
-    const finalNumber = element.textContent;
-    const numericValue = parseFloat(finalNumber.replace(/[^\d.]/g, ''));
-    const suffix = finalNumber.replace(/[\d.]/g, '');
-    
-    if(!isNaN(numericValue)) {
-      let current = 0;
-      const increment = numericValue / 30;
-      const timer = setInterval(() => {
-        current += increment;
-        if(current >= numericValue) {
-          element.textContent = finalNumber;
-          clearInterval(timer);
-        } else {
-          element.textContent = Math.floor(current) + suffix;
-        }
-      }, 50);
-    }
+    // icon: first plan's icon, or dash
+    const ico = hasPlan ? dayPlans[0].icon : '—';
+    const icoClass = hasPlan ? 'we-o' : 'we-e';
+    const icoStyle = hasPlan ? '' : 'font-size:10px;color:var(--g400)';
+
+    // badge count if multiple plans
+    const badge = hasPlan && dayPlans.length > 1
+      ? `<div class="wd-badge-count">${dayPlans.length}</div>` : '';
+
+    cell.innerHTML = `
+      <div class="wd-l">${label}</div>
+      <div style="position:relative;display:flex;justify-content:center;">
+        <div class="wd-e ${icoClass}" style="${icoStyle}">${ico}</div>
+        ${badge}
+      </div>
+      <div class="wd-t" style="${hasPlan?'':'color:var(--g400)'}">${hasPlan ? dayPlans[0].name : '空閒'}</div>`;
+    strip.appendChild(cell);
   });
 }
 
-// 當統計卡片進入視窗時觸發動畫
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      animateNumbers();
-      statsObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.stat-card').forEach(card => {
-  statsObserver.observe(card);
-});
-
-// 初始化完成後的設置
-document.addEventListener('DOMContentLoaded', function() {
-  // 初始化所有進度條為0
-  progressBars.forEach(bar => {
-    bar.style.width = '0%';
-  });
-  
-  console.log('🛡️ GWall 4.0 網頁已載入完成');
-});
-</script>
-
-<!-- 回到頂部按鈕 -->
-<button id="topBtn">↑</button>
-
-<script>
-// 取得按鈕
-const topBtn = document.getElementById("topBtn");
-
-// 監聽滾動事件，超過 200px 才顯示
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 200) {
-    topBtn.classList.add("show");
+function selectDay(idx) {
+  // Toggle off if already selected
+  if (selectedDay === idx) {
+    selectedDay = null;
   } else {
-    topBtn.classList.remove("show");
+    selectedDay = idx;
   }
-});
+  renderWeekStrip();
+  renderPlanList();
+}
 
-// 點擊回到頂部
-topBtn.addEventListener("click", () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+function renderPlanList() {
+  const list = document.getElementById('plan-list');
+  const empty = document.getElementById('plan-empty');
+  const title = document.getElementById('plan-day-title');
+
+  const filtered = selectedDay === null
+    ? plans
+    : plans.filter(p => p.day === selectedDay);
+
+  if (selectedDay === null) {
+    title.textContent = '📌 本週所有計畫';
+  } else {
+    title.textContent = `📌 週${DAY_LABELS[selectedDay]}的計畫`;
+  }
+
+  list.innerHTML = '';
+  if (filtered.length === 0) {
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    filtered.forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'plan-item';
+      el.dataset.id = p.id;
+      el.innerHTML = `
+        <div class="pi-ico">${p.icon}</div>
+        <div style="flex:1">
+          <div class="pi-n">${p.name}</div>
+          <div class="pi-d">週${DAY_LABELS[p.day]}　${p.time}</div>
+        </div>
+        <button class="pi-del" onclick="deletePlan(${p.id},event)" title="刪除">✕</button>`;
+      list.appendChild(el);
+    });
+  }
+}
+
+function deletePlan(id, e) {
+  e.stopPropagation();
+  plans = plans.filter(p => p.id !== id);
+  renderRespite();
+  showToast('🗑️ 已刪除計畫');
+}
+
+function renderReminder() {
+  // Show next day's plans if any
+  const tomorrow = (new Date().getDay() + 6) % 7; // Mon=0
+  const tmrPlans = plans.filter(p => p.day === tomorrow);
+  const banner = document.getElementById('remind-banner');
+  const txt = document.getElementById('remind-text');
+  if (tmrPlans.length > 0) {
+    banner.style.display = 'flex';
+    txt.textContent = `${tmrPlans.map(p=>`${p.name}（週${DAY_LABELS[p.day]} ${p.time}）`).join('、')}`;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ── Add plan modal ────────────────────────────────
+let selectedIcon = '🏢';
+let selectedPlanDay = null;
+
+function openAddPlan() {
+  // Pre-select the currently viewed day if any
+  selectedPlanDay = selectedDay;
+  document.getElementById('plan-name').value = '';
+  document.getElementById('plan-time').value = '';
+  selectedIcon = '🏢';
+  document.querySelectorAll('.icon-opt').forEach(b => b.classList.toggle('sel', b.dataset.ico === '🏢'));
+  // Pre-highlight day in picker
+  document.querySelectorAll('.day-opt').forEach(b => {
+    b.classList.toggle('sel', parseInt(b.dataset.day) === selectedPlanDay);
   });
-});
+  document.getElementById('add-plan-modal').classList.add('on');
+}
+function closeAddPlan(e) {
+  if (!e || e.target === document.getElementById('add-plan-modal'))
+    document.getElementById('add-plan-modal').classList.remove('on');
+}
+function pickDay(el) {
+  document.querySelectorAll('.day-opt').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedPlanDay = parseInt(el.dataset.day);
+}
+function pickIcon(el) {
+  document.querySelectorAll('.icon-opt').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedIcon = el.dataset.ico;
+}
+function addPlan() {
+  const name = document.getElementById('plan-name').value.trim();
+  const time = document.getElementById('plan-time').value.trim();
+  if (!name) { showToast('⚠️ 請輸入活動名稱'); return; }
+  if (selectedPlanDay === null) { showToast('⚠️ 請選擇星期'); return; }
+  plans.push({ id: nextPlanId++, day: selectedPlanDay, name, time: time || '全天', icon: selectedIcon });
+  document.getElementById('add-plan-modal').classList.remove('on');
+  // Jump to that day
+  selectedDay = selectedPlanDay;
+  renderRespite();
+  showToast(`✅ 已新增「${name}」到週${DAY_LABELS[selectedPlanDay]}`);
+}
+
+// Init respite on load
+renderRespite();
+
+// ── Toast ────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
 </script>
-
-<style>
-/* 回到頂部樣式 */
-#topBtn {
-  position: fixed !important;
-  right: 24px;
-  bottom: 24px;
-  z-index: 9999;
-  border: none;
-  border-radius: 50%;
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  background: linear-gradient(135deg, #00d4ff, #7c3aed);
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 25px rgba(0,212,255,0.4);
-}
-
-/* 顯示狀態 */
-#topBtn.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* hover 效果 */
-#topBtn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 35px rgba(0,212,255,0.6), 0 8px 25px rgba(0,0,0,0.3);
-}
-</style>
-
-
 </body>
 </html>
